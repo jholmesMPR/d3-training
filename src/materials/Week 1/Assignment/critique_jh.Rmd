@@ -1,5 +1,5 @@
 ---
-title: 'Critique: Assigment 1'
+title: 'Critique: Assignment 1'
 author: "Joli Holmes"
 date: "December 12, 2017"
 output: html_document
@@ -9,5 +9,51 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-![*Figure 1*](N:/User/CA1/JHolmes/Documentation/APIs/Figure 1.png) 
+####Viz 1
+Pros
+
+* Colors work well together, aesthetically pleasing
+* X-axis labels and title are clearly labeled
+
+Cons
+
+* Hard to gather immediately what the graphic is trying to display; although it's trying to compare sales stategies it isn't immediate which strategy is the most successful or least successful
+* The two y-axes are confusing, isn't immediately clear that the left-axis appears to represent the bars and the right-axis appears to reflect overall totals
+* Not super-clear if the total amount is the sum of all the product values
+* Y-axis labels aren't very clear, could be "Product Profit" or "Product Quantity" on the left-axis, and "Total Amount" on the right-axis
+
+Suggestions:
+
+####Viz 2
+Pros
+
+* Axis labels are clear and simple
+* The consistency of colors across the different medicine categories makes it easy to compare across categories
+
+Cons
+
+* Unclear what the red boxes and blue boxes are at the bottom and top of each bar
+* Too many categories/colors make it difficult to tell which color is associated with which category
+* The percents to the right of each bar don't add up to 1 or 100, so it's confused as to what they're trying to communicate
+
+Suggestions:
+
+####Viz 3
+
+Pros
+
+* Colors go nicely together in the center graphic
+* The content being communicated works well together across different graphs
+
+Cons
+
+* Title could be clearer as most of the graphs are related to consumer spending of Halloween products
+* In the **Annual Spending on Halloween** it's unclear what metric pumpkin size is associated with, looks like it might be spending
+* Unclear how the size of the circles in the **Average Spending per Person by Item** second is related to spending 
+* In the **Average Spending per Person be Item** section *Greeting cards* is missing a dollar metric and because the circle size isn't clearly related to spending it's really hard to guess at what metric for *Greeting cards* might be
+* The extra graphic art, also cute, doesn't add to the information being communicated and leads to a more cluttered infographic
+* Also the content being communicated works well together, the layout of the infographic could be improved to lead to reader through the different metrics so that the user would come away with a clearer overall picture of what is begin communicated 
+
+Suggestions:
+
 
