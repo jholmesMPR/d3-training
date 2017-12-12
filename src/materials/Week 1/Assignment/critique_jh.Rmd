@@ -1,0 +1,13 @@
+---
+title: 'Critique: Assigment 1'
+author: "Joli Holmes"
+date: "December 12, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![*Figure 1*](N:/User/CA1/JHolmes/Documentation/APIs/Figure 1.png) 
+
