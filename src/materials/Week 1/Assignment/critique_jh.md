@@ -1,8 +1,8 @@
-### Assignment 1
+# Assignment 1
 
 
 
-#### Viz 1
+## Viz 1
 
 
 Pros
@@ -29,7 +29,7 @@ I think my graph is more effective at presenting the data because the elements h
 
 ![*Alt 1*](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%201/Assignment/Alt%201.png) 
 
-#### Viz 2
+## Viz 2
 
 Pros
 
@@ -51,7 +51,7 @@ I think this graph is far more effective than the first graph. Although, not all
 
 ![*Alt 2*](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%201/Assignment/Alt%202.png) 
 
-#### Viz 3
+## Viz 3
 
 Pros
 
