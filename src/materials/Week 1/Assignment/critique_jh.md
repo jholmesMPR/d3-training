@@ -1,9 +1,4 @@
----
-title: 'Assignment 1'
-author: "Joli Holmes"
-date: "December 12, 2017"
-output: html_document
----
+Assignment 1
 
 
 
@@ -35,6 +30,7 @@ I think my graph is more effective at presenting the data because the elements h
 ![*Alt 1*](U:/d3/d3-training/src/materials/Week 1/Assignment/Alt 1.png) 
 
 ####Viz 2
+
 Pros
 
 * Axis labels are clear and simple
@@ -79,5 +75,5 @@ Improvements:
 
 The new infographic more effectively displays the data by organizing the data in such a way that it's easy to follow. The new graphic also uses bars instead of circles to compare metrics, allowing the the user to more quickly and easily compare across year or categories. 
 
-![*Alt 3*](U:/d3/d3-training/src/materials/Week 1/Assignment/Alt 3.png) 
+![*Alt 3*](https://www.figma.com/file/K3N0pHTVS2VchryT5UDslyyp/Alt-3) 
 
