@@ -27,7 +27,7 @@ Improvements:
 
 I think my graph is more effective at presenting the data because the elements have been reorganized. The "same" data are shown, but the graph displays these data in two graphs rather than one.
 
-![*Alt 1*](U:/d3/d3-training/src/materials/Week 1/Assignment/Alt 1.png) 
+![*Alt 1*](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%201/Assignment/Alt%201.png) 
 
 ####Viz 2
 
