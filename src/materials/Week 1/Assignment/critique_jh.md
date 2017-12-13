@@ -1,8 +1,8 @@
-Assignment 1
+### Assignment 1
 
 
 
-####Viz 1
+#### Viz 1
 
 
 Pros
@@ -29,7 +29,7 @@ I think my graph is more effective at presenting the data because the elements h
 
 ![*Alt 1*](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%201/Assignment/Alt%201.png) 
 
-####Viz 2
+#### Viz 2
 
 Pros
 
@@ -49,9 +49,9 @@ Improvements:
 
 I think this graph is far more effective than the first graph. Although, not all the data are shown, some have been grouped into an 'other' section, the graph is much easier to read and compare categories. The legend has also been made simpler and more concise. 
 
-![*Alt 2*](U:/d3/d3-training/src/materials/Week 1/Assignment/Alt 2.png) 
+![*Alt 2*](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%201/Assignment/Alt%202.png) 
 
-####Viz 3
+#### Viz 3
 
 Pros
 
@@ -75,5 +75,5 @@ Improvements:
 
 The new infographic more effectively displays the data by organizing the data in such a way that it's easy to follow. The new graphic also uses bars instead of circles to compare metrics, allowing the the user to more quickly and easily compare across year or categories. 
 
-![*Alt 3*](https://www.figma.com/file/K3N0pHTVS2VchryT5UDslyyp/Alt-3) 
+![*Alt 3*](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%201/Assignment/Alt%203.png) 
 
