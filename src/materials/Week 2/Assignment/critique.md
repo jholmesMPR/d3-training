@@ -3,7 +3,7 @@
 
 
 
-##Vis 1
+## Vis 1
 
 Pros
 
@@ -27,7 +27,7 @@ Improvements
 
 ![Alt 1](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%202/Assignment/Alt%201%20-%202.png)
 
-##Vis 2
+## Vis 2
 
 Pros
 
@@ -48,7 +48,7 @@ Cons
 Improvements
 * Didn't have time to complete actual mock-up
 
-##Vis 3
+## Vis 3
 
 Pros
 
