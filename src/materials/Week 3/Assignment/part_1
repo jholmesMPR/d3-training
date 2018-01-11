@@ -1,0 +1,53 @@
+
+<!---Part 1--->
+
+<!DOCTYPE html>
+
+<html>
+	<head>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	</head>
+	<body>
+	<div id = 'viz'>
+	</div>
+	<script>
+	
+	var w = 500;
+	var h = 500;
+
+	var dataset = [5];
+
+	//svg container 
+    var svg = d3
+      .select("#viz")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+    var rectangle = svg
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", 100)
+      .attr("height", 20)
+      .style('fill', "blue");
+
+    var circle = svg
+      .append("circle")
+      .attr("cx", 10)
+      .attr("cy", 50)
+      .attr("r", 5)
+      .attr("height", 20)
+      .attr('fill', "orange")
+      .attr('stroke', 'blue')
+      .attr('stroke-width', '2px');
+
+    var oct = svg
+      .append("polygon");
+ 
+
+
+	</script>
+	</body>
+
+</html>
