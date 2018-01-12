@@ -15,7 +15,19 @@
 	    <script>
 
 	    //svg container 
-	    var w = 500;
+	
+
+	    //Chrome will throw an error here, but Mozilla will not
+	    var path = "N:/User/CA1/JHolmes/d3/d3-training/src/materials/Week 3/Assignment/"
+
+		d3.json("\data.json", function(error, data) {
+
+		if (error) {
+        return console.warn(error);
+   			 }		
+
+   		//svg container 
+    	var w = 1500;
 		var h = 500;
 
 	    var svg = d3
@@ -23,23 +35,25 @@
 	      .append("svg")
 	      .attr("width", w)
 	      .attr("height", h);
+	
 
-
-	    //Chrome will throw an error here, but Mozilla will not
-	    var path = "N:/User/CA1/JHolmes/d3/d3-training/src/materials/Week 3/Assignment/"
-
-		d3.json("\data.json", function(error, data) {
-    
-		    d3.select("body")
-		        .selectAll("p")
-		        .data(data)
-		        .enter()
-		        .append("p")
-		        .text(function(d) {
-		            return d.name + ", " + d.location;
-		        });
-
+		svg
+	        .selectAll("p")
+	        .data(data)
+	        .enter()
+	        .append("rect")
+	   		.attr("y", 0)
+	        .attr("x", function(d, i) {
+	        	return i*100 + 10;
+	        })
+	        .attr("width", function(d, i){
+	         return d.size;
+	        })
+	        .attr("height", 100)
+			.style('fill', function(d){
+				return d.color;
 			});
+		});
 
 	
 
