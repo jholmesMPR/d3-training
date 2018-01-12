@@ -17,8 +17,18 @@
 	    d3.json("\data.json", function(error, data) {
 
 		if (error) {
-        return console.warn(error);
-   			 }		
+       		 return console.warn(error);
+   		}	
+
+   		//svg container 
+    	var w = 1500;
+		var h = 500;
+
+	    var svg = d3
+	      .select("#viz")
+	      .append("svg")
+	      .attr("width", w)
+	      .attr("height", h);	
    		})
 
 
