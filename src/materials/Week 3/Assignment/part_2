@@ -53,6 +53,21 @@
 			.style('fill', function(d){
 				return d.color;
 			});
+
+		svg
+		.selectAll("p")
+	        .data(data)
+	        .enter()
+	        .append("circle")
+	        .attr("cx", function(d, i) {
+	        	return i*100 + 10;
+	        })
+      		.attr("cy", 130)
+      		.attr("r", 20)
+      		.attr('fill',  function(d){
+				return d.color;
+			});
+
 		});
 
 	
