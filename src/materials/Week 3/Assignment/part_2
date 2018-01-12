@@ -60,9 +60,11 @@
 	        .enter()
 	        .append("circle")
 	        .attr("cx", function(d, i) {
-	        	return i*100 + 10;
+	        	return size;
 	        })
-      		.attr("cy", 130)
+      		.attr("cy", function(d, i) {
+	        	return size*-2;
+	        })
       		.attr("r", 20)
       		.attr('fill',  function(d){
 				return d.color;
