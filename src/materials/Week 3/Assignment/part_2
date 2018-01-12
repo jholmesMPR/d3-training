@@ -1,0 +1,50 @@
+
+<!---Part 1--->
+
+<!DOCTYPE html>
+
+<html>
+	<head>
+
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+	</head>
+	<body>
+		<div id = 'viz'>
+		</div>
+
+	    <script>
+
+	    //svg container 
+	    var w = 500;
+		var h = 500;
+
+	    var svg = d3
+	      .select("#viz")
+	      .append("svg")
+	      .attr("width", w)
+	      .attr("height", h);
+
+
+	    //Chrome will throw an error here, but Mozilla will not
+	    var path = "N:/User/CA1/JHolmes/d3/d3-training/src/materials/Week 3/Assignment/"
+
+		d3.json("\data.json", function(error, data) {
+    
+		    d3.select("body")
+		        .selectAll("p")
+		        .data(data)
+		        .enter()
+		        .append("p")
+		        .text(function(d) {
+		            return d.name + ", " + d.location;
+		        });
+
+			});
+
+	
+
+
+	    </script>
+	</body>
+
+</html>
