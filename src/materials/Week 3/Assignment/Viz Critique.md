@@ -1,10 +1,3 @@
----
-title: "Viz Critque"
-author: "Joli Holmes"
-date: "January 11, 2018"
-output: html_document
----
-
 ### Viz Critique
 
 Pros:
