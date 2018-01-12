@@ -36,12 +36,13 @@
 	      .attr("width", w)
 	      .attr("height", h);
 	
-
+	     //Rectangles
 		svg
 	        .selectAll("p")
 	        .data(data)
 	        .enter()
 	        .append("rect")
+	        .attr("stroke", "black")
 	   		.attr("y", 0)
 	        .attr("x", function(d, i) {
 	        	return i*100 + 10;
@@ -54,16 +55,18 @@
 				return d.color;
 			});
 
+		//Circles
 		svg
 		.selectAll("p")
 	        .data(data)
 	        .enter()
 	        .append("circle")
-	        .attr("cx", function(d, i) {
-	        	return size;
+	        .attr("stroke", 'black')
+	        .attr("cy", function(d, i) {
+	        	return d.size + 125;
 	        })
-      		.attr("cy", function(d, i) {
-	        	return size*-2;
+      		.attr("cx", function(d, i) {
+	        	return d.size*2;
 	        })
       		.attr("r", 20)
       		.attr('fill',  function(d){
