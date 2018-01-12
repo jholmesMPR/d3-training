@@ -31,6 +31,21 @@
 	      .attr("height", h);	
    		})
 
+   		//Circles
+		svg
+		.selectAll("p")
+	        .data(data)
+	        .enter()
+	        .append("circle")
+	        .attr("stroke", 'black')
+	        .attr("cy", 20)
+      		.attr("cx", 20)
+      		.attr("r", 20)
+      		.attr('fill',  function(d){
+				return d.color;
+			});
+
+		});
 
 	    //Update Viz Function	
 		function updateViz(data) {
