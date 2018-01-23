@@ -5,7 +5,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-##Vis 1
+## Vis 1
 
 Pros
 
@@ -19,10 +19,17 @@ Cons
 * The points on the monthly performance (x) are a little bit distracting, could be better to use a simple dot, and the color is also unnecessary
 * It looks like the quarterly and monthly performance categories show the same metrics, just summarized by quarter or by month. In that case the graphs should probably be the same.
 
+Improvements
 
-![Alt 1]()
+* The overall image is simplified
+* The dashboard is unified under one color-theme
+* The dashboard has been simplifed by creating widgets to the left of the the graphs
+* All the products and regions are shown in the same graph for easy comparison
+* Pie charts are turned into line charts for easy comparison of categories
 
-##Vis 2
+![Alt 1](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%202/Assignment/Alt%201%20-%202.png)
+
+## Vis 2
 
 Pros
 
@@ -40,10 +47,10 @@ Cons
 * In the lower-right graph there are both solid and dashed lines and it's unclear if they are supposed to distinguish between additional categories
 * The upper-middle graph has a combination of line, bar, and area making for a very confusing graph
 
+Improvements
+* Didn't have time to complete actual mock-up
 
-![Alt 2]()
-
-##Vis 3
+## Vis 3
 
 Pros
 
@@ -59,4 +66,9 @@ Cons
 * The white text on white-gray background is hard to read 
 * There isn't really a good reason to have two different color themes for the Saints vs. Platform average, as the spectrums are showing the same data
 
-![Alt 3]()
+Improvements
+
+* My visualization improves on the initial visual by making it less 'busy'
+* The season and team choice are simplified as a widget to the side of the graph instead of displaying all the data at once
+* The color spectrum is also simplified, so that there aren't two spectrums representing the same categories
+![Alt 3](https://github.com/jholmesMPR/d3-training/blob/master/src/materials/Week%202/Assignment/Alt%203%20-%202.png)

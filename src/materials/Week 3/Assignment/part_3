@@ -16,34 +16,34 @@
 	    //Read in data
 	    d3.json("\data.json", function(error, data) {
 
-		if (error) {
-       		 return console.warn(error);
-   		}	
+			if (error) {
+	       		return console.warn(error);
+	   		}	
 
-   		//svg container 
-    	var w = 1500;
-		var h = 500;
+	   		//svg container 
+	    	var w = 1500;
+			var h = 500;
 
-	    var svg = d3
-	      .select("#viz")
-	      .append("svg")
-	      .attr("width", w)
-	      .attr("height", h);	
-   		})
+		    var svg = d3
+		      .select("#viz")
+		      .append("svg")
+		      .attr("width", w)
+		      .attr("height", h);	
+	   		})
 
-   		//Circles
-		svg
-		.selectAll("p")
-	        .data(data)
-	        .enter()
-	        .append("circle")
-	        .attr("stroke", 'black')
-	        .attr("cy", 20)
-      		.attr("cx", 20)
-      		.attr("r", 20)
-      		.attr('fill',  function(d){
-				return d.color;
-			});
+	   		//Circles
+			svg
+			.selectAll("p")
+		        .data(data)
+		        .enter()
+		        .append("circle")
+		        .attr("stroke", 'black')
+		        .attr("cy", 20)
+	      		.attr("cx", 20)
+	      		.attr("r", 20)
+	      		.attr('fill',  function(d){
+					return d.color;
+				});
 
 		});
 
