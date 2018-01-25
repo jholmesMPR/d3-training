@@ -8,7 +8,7 @@ function buildChart(containerId) {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 50
+        left: 75
     };
 
     // calculate dimensions without margins
@@ -62,7 +62,7 @@ function buildChart(containerId) {
             .scaleTime()
             .domain(
                 d3.extent(data, function(d) {
-                    return d.date;
+                    return d.temp;
                 })
             )
             .range([0, innerWidth]);
@@ -74,12 +74,73 @@ function buildChart(containerId) {
             .domain([
                 0,
                 d3.max(data, function(d) {
-                    return d.W;
+                    return d.year;
                 }) + 5
             ])
             .range([innerHeight, 0]);
 
         console.log(y.domain(), y.range());
+
+        // axes
+        var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(10));
+
+        g
+            .append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', 'translate(0,' + innerHeight + ')')
+            .call(xAxis);
+
+        var yAxis = d3.axisLeft(y).ticks(10);
+
+        g
+            .append('g')
+            .attr('class', 'y-axis')
+            .call(yAxis);
+
+        // axis labels
+        g
+            .append('text')
+            .attr('class', 'x-axis-label')
+            .attr('x', innerWidth / 2)
+            .attr('y', innerHeight + 15)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'hanging')
+            .text('Year')
+            .style("font", "20px times");
+
+
+        g
+            .append('text')
+            .attr('class', 'y-axis-label')
+            .attr('x', 0)
+            .attr('y', innerHeight / 2 - 25)
+            .attr('transform', 'rotate(-90,-30,' + innerHeight / 2 + ')')
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .text('Temperature Change')
+            .style("font", "24px times");
+
+        // title
+        g
+            .append('text')
+            .attr('class', 'title')
+            .attr('x', innerWidth / 2)
+            .attr('y', -20)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .text('Average Temperature Change from 1880 - 2016 (Celcius)')
+            .style("font", "24px times");
+
+
+        // line generator
+        var line = d3
+            .line()
+            .x(function(d) {
+                return x(d.year);
+            })
+            .y(function(d) {
+                return y(d.temp);
+            });
 
     });
 
