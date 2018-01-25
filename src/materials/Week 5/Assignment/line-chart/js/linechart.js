@@ -39,6 +39,48 @@ function buildChart(containerId) {
 
         console.log('raw', data);
 
+
+        // coerce data to numeric
+        data.forEach(function(d) {
+            d.temp = +d.temp; //temp is a variable in the data 'climate'
+        });
+
+        // coerce data to numeric
+                var parseTime = d3.timeParse('%Y');
+
+                data.forEach(function(d) {
+                    d.W = +d.W;
+                    d.date = parseTime((+d.yearID).toString());
+                });
+
+
+        console.log('clean', data);
+
+
+        // scales
+        var x = d3
+            .scaleTime()
+            .domain(
+                d3.extent(data, function(d) {
+                    return d.date;
+                })
+            )
+            .range([0, innerWidth]);
+
+        console.log(x.domain(), x.range());
+
+        var y = d3
+            .scaleLinear()
+            .domain([
+                0,
+                d3.max(data, function(d) {
+                    return d.W;
+                }) + 5
+            ])
+            .range([innerHeight, 0]);
+
+        console.log(y.domain(), y.range());
+
     });
 
 }
