@@ -89,6 +89,11 @@ function buildChart(containerId) {
             .attr('class', 'x-axis')
             .attr('transform', 'translate(0,' + innerHeight + ')')
             .call(xAxis)
+          .selectAll("text")    
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-90)");
 
             //.attr('transform', 'rotate(-90,-30,' + innerHeight / 2 + ')');
 
@@ -108,8 +113,7 @@ function buildChart(containerId) {
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'hanging')
             .text('Year')
-            .style("font", "20px times");
-
+            .style("font", "16px times");
 
         g
             .append('text')
@@ -120,7 +124,7 @@ function buildChart(containerId) {
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .text('Temperature Change')
-            .style("font", "24px times");
+            .style("font", "16px times");
 
         // title
         g
@@ -131,7 +135,7 @@ function buildChart(containerId) {
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .text('Average Temperature Change from 1880 - 2016 (Celcius)')
-            .style("font", "24px times");
+            .style("font", "20px times");
 
 
         // line generator
@@ -152,8 +156,6 @@ function buildChart(containerId) {
             .attr('stroke', 'red')
             .attr('stroke-width', 1.2)
             .attr('d', line);
-
-
 
         // add points
         g
