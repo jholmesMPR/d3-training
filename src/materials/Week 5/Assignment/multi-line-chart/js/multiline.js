@@ -1,7 +1,7 @@
 
 function buildChart(containerId) {
   // size globals
-    var width = 100;
+    var width = 1000;
     var height = 750;
 
     var margin = {
@@ -65,6 +65,30 @@ function buildChart(containerId) {
                 }) 
             ])
             .range([innerHeight, 0]);
+
+    // axes
+        var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(1));
+   
+        g
+            .append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', 'translate(0,' + innerHeight + ')')
+            .call(xAxis)
+          .selectAll("text")    
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-90)");
+
+            //.attr('transform', 'rotate(-90,-30,' + innerHeight / 2 + ')');
+
+        var yAxis = d3.axisLeft(y).ticks(10);
+
+        g
+            .append('g')
+            .attr('class', 'y-axis')
+            .call(yAxis);
+
 
     });
 
