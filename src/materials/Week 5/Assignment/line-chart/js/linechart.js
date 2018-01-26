@@ -1,8 +1,8 @@
 
 function buildChart(containerId) {
   // size globals
-    var width = 960;
-    var height = 500;
+    var width = 750;
+    var height = 750;
 
     var margin = {
         top: 50,
@@ -42,27 +42,25 @@ function buildChart(containerId) {
 
         // coerce data to numeric
         data.forEach(function(d) {
-            d.temp = +d.temp; //temp is a variable in the data 'climate'
+            d.temp = +d.temp; 
         });
 
-        // coerce data to numeric
-                var parseTime = d3.timeParse('%Y');
+        //coerce data to numeric
+        var parseTime = d3.timeParse('%Y');
 
-                data.forEach(function(d) {
-                    d.W = +d.W;
-                    d.date = parseTime((+d.yearID).toString());
-                });
-
+        data.forEach(function(d) {
+            d.yearID = +d.year;
+            d.date = parseTime((+d.yearID).toString());
+        });
 
         console.log('clean', data);
-
 
         // scales
         var x = d3
             .scaleTime()
             .domain(
                 d3.extent(data, function(d) {
-                    return d.temp;
+                    return d.date;
                 })
             )
             .range([0, innerWidth]);
@@ -72,23 +70,27 @@ function buildChart(containerId) {
         var y = d3
             .scaleLinear()
             .domain([
-                0,
+                d3.min(data, function(d) {
+                    return d.temp;
+                }),
                 d3.max(data, function(d) {
-                    return d.year;
-                }) + 5
+                    return d.temp;
+                }) 
             ])
             .range([innerHeight, 0]);
 
         console.log(y.domain(), y.range());
 
         // axes
-        var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(10));
-
+        var xAxis = d3.axisBottom(x).ticks(5);
+   
         g
             .append('g')
             .attr('class', 'x-axis')
             .attr('transform', 'translate(0,' + innerHeight + ')')
-            .call(xAxis);
+            .call(xAxis)
+
+            //.attr('transform', 'rotate(-90,-30,' + innerHeight / 2 + ')');
 
         var yAxis = d3.axisLeft(y).ticks(10);
 
@@ -125,7 +127,7 @@ function buildChart(containerId) {
             .append('text')
             .attr('class', 'title')
             .attr('x', innerWidth / 2)
-            .attr('y', -20)
+            .attr('y', -15)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .text('Average Temperature Change from 1880 - 2016 (Celcius)')
@@ -136,11 +138,39 @@ function buildChart(containerId) {
         var line = d3
             .line()
             .x(function(d) {
-                return x(d.year);
+                return x(d.date);
             })
             .y(function(d) {
                 return y(d.temp);
             });
+
+        g
+            .append('path')
+            .datum(data)
+            .attr('class', 'line')
+            .attr('fill', 'none')
+            .attr('stroke', 'red')
+            .attr('stroke-width', 1.2)
+            .attr('d', line);
+
+
+
+        // add points
+        g
+            .selectAll('.point')
+            .data(data)
+            .enter()
+            .append('circle')
+            .attr('class', 'point')
+            .attr('fill', 'red')
+            .attr('stroke', 'none')
+            .attr('cx', function(d) {
+                return x(d.date);
+            })
+            .attr('cy', function(d) {
+                return y(d.temp);
+            })
+            .attr('r', 3);
 
     });
 
