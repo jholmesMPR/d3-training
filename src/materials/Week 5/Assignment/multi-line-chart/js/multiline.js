@@ -37,6 +37,14 @@ function buildChart(containerId) {
             return;
         }
         console.log('raw', data);
+
+        var parseTime = d3.timeParse('%Y');
+
+        data.forEach(function(d) {
+            d.yearN = +d.year.substring(8,12);
+            d.date = parseTime((+d.yearN).toString());
+    });
+
     var x = d3
             .scaleTime()
             .domain(
@@ -53,7 +61,7 @@ function buildChart(containerId) {
             .domain([
                 0,
                 d3.max(data, function(d) {
-                    return d.temp;
+                    return d.pop;
                 }) 
             ])
             .range([innerHeight, 0]);
