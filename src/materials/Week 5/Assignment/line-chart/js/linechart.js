@@ -1,7 +1,7 @@
 
 function buildChart(containerId) {
   // size globals
-    var width = 750;
+    var width = 1500;
     var height = 750;
 
     var margin = {
@@ -82,7 +82,7 @@ function buildChart(containerId) {
         console.log(y.domain(), y.range());
 
         // axes
-        var xAxis = d3.axisBottom(x).ticks(5);
+        var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(1));
    
         g
             .append('g')
@@ -109,7 +109,7 @@ function buildChart(containerId) {
             .append('text')
             .attr('class', 'x-axis-label')
             .attr('x', innerWidth / 2)
-            .attr('y', innerHeight + 15)
+            .attr('y', innerHeight + 30)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'hanging')
             .text('Year')
