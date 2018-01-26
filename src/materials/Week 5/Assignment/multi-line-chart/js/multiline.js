@@ -8,7 +8,7 @@ function buildChart(containerId) {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 50
+        left: 100
     };
 
     // calculate dimensions without margins
@@ -80,8 +80,6 @@ function buildChart(containerId) {
             .attr("dy", ".15em")
             .attr("transform", "rotate(-90)");
 
-            //.attr('transform', 'rotate(-90,-30,' + innerHeight / 2 + ')');
-
         var yAxis = d3.axisLeft(y).ticks(10);
 
         g
@@ -89,7 +87,38 @@ function buildChart(containerId) {
             .attr('class', 'y-axis')
             .call(yAxis);
 
+        // axis labels
+        g
+            .append('text')
+            .attr('class', 'x-axis-label')
+            .attr('x', innerWidth / 2)
+            .attr('y', innerHeight + 35)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'hanging')
+            .text('Year')
+            .style("font", "16px times");
 
+        g
+            .append('text')
+            .attr('class', 'y-axis-label')
+            .attr('x', 0)
+            .attr('y', innerHeight / 2 - 50)
+            .attr('transform', 'rotate(-90,-30,' + innerHeight / 2 + ')')
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .text('Population')
+            .style("font", "16px times");
+
+        // title
+        g
+            .append('text')
+            .attr('class', 'title')
+            .attr('x', innerWidth / 2 )
+            .attr('y', 0)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .text('Comparing the populations of China and India 1960 - 2017')
+            .style("font", "20px times");
     });
 
 }
