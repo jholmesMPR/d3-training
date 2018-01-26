@@ -37,7 +37,26 @@ function buildChart(containerId) {
             return;
         }
         console.log('raw', data);
+    var x = d3
+            .scaleTime()
+            .domain(
+                d3.extent(data, function(d) {
+                    return d.date;
+                })
+            )
+            .range([0, innerWidth]);
 
+        console.log(x.domain(), x.range());
+
+        var y = d3
+            .scaleLinear()
+            .domain([
+                0,
+                d3.max(data, function(d) {
+                    return d.temp;
+                }) 
+            ])
+            .range([innerHeight, 0]);
 
     });
 
