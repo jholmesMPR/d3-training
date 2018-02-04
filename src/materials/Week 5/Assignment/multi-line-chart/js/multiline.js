@@ -40,15 +40,25 @@ function buildChart(containerId) {
 
         var parseTime = d3.timeParse('%Y');
 
-        data.forEach(function(d) {
+
+        var newdata = data.filter(
+                    function (d){
+                         return d.pop != null;
+            });
+
+        newdata.forEach(function(d) {
             d.yearN = +d.year.substring(8,12);
             d.date = parseTime((+d.yearN).toString());
+            d.pop = Number(d.pop)
+
     });
+
+    console.log('new_clean', newdata);
 
     var x = d3
             .scaleTime()
             .domain(
-                d3.extent(data, function(d) {
+                d3.extent(newdata, function(d) {
                     return d.date;
                 })
             )
@@ -56,15 +66,17 @@ function buildChart(containerId) {
 
         console.log(x.domain(), x.range());
 
-        var y = d3
+    var y = d3
             .scaleLinear()
             .domain([
                 0,
-                d3.max(data, function(d) {
+                d3.max(newdata, function(d) {
                     return d.pop;
                 }) 
             ])
             .range([innerHeight, 0]);
+
+             console.log(y.domain(), y.range());
 
     // axes
         var xAxis = d3.axisBottom(x).ticks(d3.timeYear.every(1));
@@ -113,12 +125,74 @@ function buildChart(containerId) {
         g
             .append('text')
             .attr('class', 'title')
-            .attr('x', innerWidth / 2 )
-            .attr('y', 0)
+            .attr('x', innerWidth / 2)
+            .attr('y', 0 - 10)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .text('Comparing the populations of China and India 1960 - 2017')
             .style("font", "20px times");
+
+        var countries = ['China', 'India'];
+        var colors = ['red', 'orange'];
+
+        var colorScale = d3
+            .scaleOrdinal()
+            .domain(countries)
+            .range(colors);
+
+        var groups = g
+            .selectAll('.countries')
+            .data(countries)
+            .enter()
+            .append('g')
+            .attr('class', 'countries');
+        
+        var line = d3
+            .line()
+            .x(function(d) {
+                return x(d.date);
+            })
+            .y(function(d) {
+                return y(d.pop);
+            });
+
+        groups
+            .append('path')
+            .datum(function(d) {
+                return newdata.filter(function(r) {
+                    return r.country === d;
+                });
+            })
+            .attr('class', 'win-line')
+            .attr('fill', 'none')
+            .attr('stroke', function(d) {
+                return colorScale(d[0].country);
+            })
+            .attr('stroke-width', 1.5)
+            .attr('d', line);
+
+         groups
+            .selectAll('.point')
+            .data(function(d) {
+                return newdata.filter(function(r) {
+                    return r.country === d;
+                });
+            })
+            .enter()
+            .append('circle')
+            .attr('class', 'point')
+            .attr('fill', function(d) {
+                return colorScale(d.country);
+            })
+            .attr('stroke', 'none')
+            .attr('cx', function(d) {
+                return x(d.date);
+            })
+            .attr('cy', function(d) {
+                return y(d.pop);
+            })
+            .attr('r', 3);
+
     });
 
 }
