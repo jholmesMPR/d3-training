@@ -28,7 +28,7 @@ var g = svg
             console.error('failed to read data');
             return;
         }
-        console.log('raw', data);
+       // console.log('raw', data);
 
      //A
         data.forEach(function(d){
@@ -53,40 +53,64 @@ var g = svg
         console.log(JSON.stringify(average_hw));
     //B
 
-    // data.forEach(function(d)){
-    //     if (d.weakness === "Psychic"){
-    //         d.Psychic = 1;
-    //     }
-    //     else{
-    //         d.Psychic = 0;
-    //     }
-    // }
+    data.forEach(function(d){
+        if(d.weaknesses.includes("Psychic"))
+          {d.Psychic = 1}
+        else{
+          d.Psychic = 0
+        }
+    })
+
     var egg_value = d3.nest()
           .rollup(function(v) { return {
             egg_sum: d3.sum(v, function(d) { 
-                if (isNaN(d.n_egg)) {
-                    return d.n_egg = -1;
+                if(d.Psychic == 1){
+
+                if (isNaN(d.egg_n)) {
+                    return d.egg_n = -1;
                 }else{
-                    return d.n_egg; }
+                    return d.egg_n; }
+                  }
 
                 })
               }; 
             })
               .entries(data);
-            console.log(JSON.stringify(egg_value));
+    console.log(JSON.stringify(egg_value));
 
     //C
-     var weakness = d3.nest()
-      .key(function(d) { return d.name; })
-      .rollup(function(v) { return  v.length; 
-             
-       })
-      .entries(data);
-        console.log(JSON.stringify(weakness));
 
-      console.log('test', data[0].weakness);
+    var lookup = {};
+    var result = [];
+
+
+    data.forEach(function(d){
+      var subset = d.type;
+      for (i = 0; i < subset.length; i++) { 
+        var t = subset[i];
+        if (!(t in lookup)) {
+          lookup[t] = 1;
+          result.push(t);
+        }}
+      //console.log('subset',  subset)
+    }); 
+  
+    console.log('unique types:', lookup)
+    // data.forEach(function(d){
+    //   d.num_weakness = d.weaknesses.length; //create var for # of weaknesses
+    //     })
+
+    // console.log('types', types);
+
     //D
+      data.forEach(function(d){
+        d.spawn_time_min = +d.spawn_time.substring(3,5);
+        d.spawn_time_hour = +d.spawn_time.substring(0,2);
+        d.spawn_time_total = d.spawn_time_hour*60 + d.spawn_time_min;
+        
+      })
 
+      //Look at distributions
         var weight_stats = d3.nest()
           .rollup(function(v) { return {
             min_weight: d3.min(v, function(d) { return d.weight_n; }),
@@ -102,10 +126,29 @@ var g = svg
           .entries(data);
         console.log(JSON.stringify(weight_stats));
 
-
-    });
+    //Create Quantile scale
+     var quantile_scale = d3
+      .scaleQuantile()
+      .domain(
+        data.map(function(d) {
+          return d.weight_n;
+        })
+      )
+      .range(["1","2","3","4","5"]);
+     
+      data.forEach(function(d){
+          d.quantile_group = quantile_scale(d.weight_n);
+      })      
+     
+      var avg_span = d3.nest()
+        .key(function(d) { return d.quantile_group; })
+        .rollup(function(v) { return {
+            mean_time: d3.mean(v, function(d) { return d.spawn_time_total; })
+          };
+        })
+        .entries(data);
+        console.log(JSON.stringify(avg_span));
+   });
 
 }
-
-
 buildChart('#pokemon')
