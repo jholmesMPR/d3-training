@@ -79,11 +79,11 @@ var g = svg
     console.log(JSON.stringify(egg_value));
 
     //C
-
+ 
     var lookup = {};
     var result = [];
 
-
+    //create list of unique types
     data.forEach(function(d){
       var subset = d.type;
       for (i = 0; i < subset.length; i++) { 
@@ -92,24 +92,16 @@ var g = svg
           lookup[t] = 1;
           result.push(t);
         }}
-      //console.log('subset',  subset)
     }); 
-  
-    console.log('unique types:', lookup)
+
+
     // data.forEach(function(d){
     //   d.num_weakness = d.weaknesses.length; //create var for # of weaknesses
     //     })
-
-    // console.log('types', types);
+  
+    console.log('unique types:', lookup)
 
     //D
-      data.forEach(function(d){
-        d.spawn_time_min = +d.spawn_time.substring(3,5);
-        d.spawn_time_hour = +d.spawn_time.substring(0,2);
-        d.spawn_time_total = d.spawn_time_hour*60 + d.spawn_time_min;
-        
-      })
-
       //Look at distributions
         var weight_stats = d3.nest()
           .rollup(function(v) { return {
@@ -126,28 +118,33 @@ var g = svg
           .entries(data);
         console.log(JSON.stringify(weight_stats));
 
-    //Create Quantile scale
-     var quantile_scale = d3
-      .scaleQuantile()
-      .domain(
-        data.map(function(d) {
-          return d.weight_n;
-        })
-      )
-      .range(["1","2","3","4","5"]);
+      //Create Quantile Scale 
+        var quantile_scale = d3
+          .scaleQuantile()
+          .domain(
+            data.map(function(d) {
+              return d.weight_n;
+            })
+          )
+          .range(["1","2","3","4","5"]);
+
+        //Apply quantile and other data management steps
+        data.forEach(function(d){
+            d.spawn_time_min = +d.spawn_time.substring(3,5);
+            d.spawn_time_hour = +d.spawn_time.substring(0,2);
+            d.spawn_time_total = d.spawn_time_hour*60 + d.spawn_time_min;
+            d.quantile_group = quantile_scale(d.weight_n);
+          })
      
-      data.forEach(function(d){
-          d.quantile_group = quantile_scale(d.weight_n);
-      })      
-     
-      var avg_span = d3.nest()
-        .key(function(d) { return d.quantile_group; })
-        .rollup(function(v) { return {
-            mean_time: d3.mean(v, function(d) { return d.spawn_time_total; })
-          };
-        })
-        .entries(data);
-        console.log(JSON.stringify(avg_span));
+        //Summarize Data 
+        var avg_span = d3.nest()
+          .key(function(d) { return d.quantile_group; })
+          .rollup(function(v) { return {
+              mean_time: d3.mean(v, function(d) { return d.spawn_time_total; })
+            };
+          })
+          .entries(data);
+          console.log(JSON.stringify(avg_span));
    });
 
 }
