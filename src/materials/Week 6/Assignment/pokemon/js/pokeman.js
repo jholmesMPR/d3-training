@@ -1,150 +1,153 @@
 
 function buildChart(containerId) {
-  // set the dimensions and margins of the graph
-var margin = {
-    top: 50, 
-    right: 50, 
-    bottom: 50, 
-    left: 45}
-
-var width = 960 - margin.left - margin.right;
-var height = 500 - margin.top - margin.bottom;
-
-var svg = d3
-        .select(containerId)
-        .append('svg')
-        .attr('height', height)
-        .attr('width', width);
-
-// create inner group element
-var g = svg
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 // read in our data
-    d3.json('data/pokemon.json', function(error, data) {
-        // handle read errors
-        if (error) {
-            console.error('failed to read data');
-            return;
-        }
-       // console.log('raw', data);
+  d3.json('data/pokemon.json', function(error, data) {
+      // handle read errors
+      if (error) {
+          console.error('failed to read data');
+          return;
+      }
 
-     //A
-        data.forEach(function(d){
-            d.height_n = d.height.replace(/ m/, '');
-            d.weight_n = d.weight.replace(/ kg/,'');
-            d.egg_n = d.egg.replace(/ km/,'');
-            d.height_n = Number(d.height_n)*3.28084;
-            d.weight_n = Number(d.weight_n)*2.20462;
-            d.egg_n = Number(d.egg_n)*2.20462;
+    // console.log('raw', data);
 
-        })
-
-        console.log('clean', data);
-
-        var average_hw = d3.nest()
-          .key(function(d) { return d.name; })
-          .rollup(function(v) { return {
-            avg_height: d3.mean(v, function(d) { return d.height_n; }),
-            avg_weight: d3.mean(v, function(d) { return d.weight_n; })
-          }; })
-          .entries(data);
-        console.log(JSON.stringify(average_hw));
-    //B
-
+    //Data Management Steps
     data.forEach(function(d){
-        if(d.weaknesses.includes("Psychic"))
-          {d.Psychic = 1}
+        d.height_n = d.height.replace(/ m/, '');
+        d.weight_n = d.weight.replace(/ kg/,'');
+        d.egg_n = d.egg.replace(/ km/,'');
+        d.height_n = Number(d.height_n)*3.28084;
+        d.weight_n = Number(d.weight_n)*2.20462;
+        d.egg_n = Number(d.egg_n)*2.20462;
+        if(d.weaknesses.includes("Psychic")){
+          d.Psychic = 1;}
         else{
-          d.Psychic = 0
-        }
+          d.Psychic = 0; 
+        };
+        d.spawn_time_min = +d.spawn_time.substring(3,5);
+        d.spawn_time_hour = +d.spawn_time.substring(0,2);
+        d.spawn_time_total = d.spawn_time_hour*60 + d.spawn_time_min;
     })
 
-    var egg_value = d3.nest()
-          .rollup(function(v) { return {
-            egg_sum: d3.sum(v, function(d) { 
-                if(d.Psychic == 1){
+    //console.log('clean', data);
 
-                if (isNaN(d.egg_n)) {
-                    return d.egg_n = -1;
-                }else{
-                    return d.egg_n; }
-                  }
+   //A
 
-                })
-              }; 
-            })
-              .entries(data);
-    console.log(JSON.stringify(egg_value));
+    var average_hw = d3.nest()
+      .key(function(d) { return d.name; })
+      .rollup(function(v) { return {
+        avg_height: d3.mean(v, function(d) { return d.height_n; }),
+        avg_weight: d3.mean(v, function(d) { return d.weight_n; })
+      }; })
+      .entries(data);
+    
+    console.log('Average ht (ft) and wt (lb): ', average_hw);
 
-    //C
- 
-    var lookup = {};
-    var result = [];
+  //B
 
-    //create list of unique types
-    data.forEach(function(d){
-      var subset = d.type;
-      for (i = 0; i < subset.length; i++) { 
-        var t = subset[i];
-        if (!(t in lookup)) {
-          lookup[t] = 1;
-          result.push(t);
-        }}
-    }); 
+  var egg_value = d3.nest()
+      .rollup(function(v) { return {
+        egg_sum: d3.sum(v, function(d) { 
+            if(d.Psychic == 1){
+
+              if (isNaN(d.egg_n)) {
+                  return d.egg_n = -1;
+              }else{
+                  return d.egg_n; 
+              }
+            }
+          })
+        }; 
+      })
+      .entries(data);
+
+  console.log('Average Egg Dist:', egg_value);
+
+  //C
+  //Generate new json list called result to summarize
+  var result = [];
+
+  data.forEach(function(d){
+    var subset = d.type;
+    var pokemon = d.name;
+    var num_weakness = d.weaknesses.length; 
+    for (i = 0; i < subset.length; i++) { 
+      var type = subset[i];
+      result.push({pokemon, type,num_weakness});
+    }
+  }); 
+  //console.log('result:', result);
+
+  // Summarize result
+  var avg_weakness_by_type = d3.nest()
+    .key(function(d) { return d.type; })
+    .rollup(function(v) { return d3.mean(v, function(d) { return d.num_weakness; }); })
+    .entries(result);
+
+   avg_weakness_by_type.sort(function(x, y){
+    return d3.descending(x.value, y.value);
+   });
+  console.log('Sorted array of Avg. Weaknesses:',avg_weakness_by_type);
+      
+  // avg_weakness_by_type.sort(function(x, y){
+  //     return d3.ascending(x.num_weakness, y.num_weakness);
+  //   });
+
+   //console.log('Avg. Weakness by Type', avg_weakness_by_type);
+   // data.map(function(d) {
+   //    return d.year;})
 
 
-    // data.forEach(function(d){
-    //   d.num_weakness = d.weaknesses.length; //create var for # of weaknesses
-    //     })
-  
-    console.log('unique types:', lookup)
+  var max = d3
+          .max(avg_weakness_by_type, function(d) {
+                    return d.value;
+                });
 
-    //D
-      //Look at distributions
-        var weight_stats = d3.nest()
-          .rollup(function(v) { return {
-            min_weight: d3.min(v, function(d) { return d.weight_n; }),
-            max_weight: d3.max(v, function(d) { return d.weight_n; }),
-            avg_weight: d3.mean(v, function(d) { return d.weight_n; }),
-            p0: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),0),
-            p25: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),.25),
-            p50: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),.5),
-            p75: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),.75),
-            p100: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),100)
-         
-          }; })
-          .entries(data);
-        console.log(JSON.stringify(weight_stats));
+  console.log("Max Avg. Weakness:", JSON.stringify(max));
+
+  //D
+    //Look at distributions
+      var weight_stats = d3.nest()
+        .rollup(function(v) { return {
+          min_weight: d3.min(v, function(d) { return d.weight_n; }),
+          max_weight: d3.max(v, function(d) { return d.weight_n; }),
+          avg_weight: d3.mean(v, function(d) { return d.weight_n; }),
+          p0: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),0),
+          p25: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),.25),
+          p50: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),.5),
+          p75: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),.75),
+          p100: d3.quantile(v.map(function(d) { return d.weight_n;}).sort(d3.ascending),100)
+       
+        }; })
+        .entries(data);
+      console.log('Weight Summary:', weight_stats);
 
       //Create Quantile Scale 
-        var quantile_scale = d3
-          .scaleQuantile()
-          .domain(
-            data.map(function(d) {
-              return d.weight_n;
-            })
-          )
-          .range(["1","2","3","4","5"]);
+      var quantile_scale = d3
+        .scaleQuantile()
+        .domain(
+          data.map(function(d) {
+            return d.weight_n;
+          })
+        )
+        .range(["1","2","3","4","5"]);
 
-        //Apply quantile and other data management steps
-        data.forEach(function(d){
-            d.spawn_time_min = +d.spawn_time.substring(3,5);
-            d.spawn_time_hour = +d.spawn_time.substring(0,2);
-            d.spawn_time_total = d.spawn_time_hour*60 + d.spawn_time_min;
-            d.quantile_group = quantile_scale(d.weight_n);
-          })
-     
-        //Summarize Data 
-        var avg_span = d3.nest()
-          .key(function(d) { return d.quantile_group; })
-          .rollup(function(v) { return {
-              mean_time: d3.mean(v, function(d) { return d.spawn_time_total; })
-            };
-          })
-          .entries(data);
-          console.log(JSON.stringify(avg_span));
+      //Apply quantile and other data management steps
+      data.forEach(function(d){
+          d.quantile_group = quantile_scale(d.weight_n);
+        })
+   
+      //Summarize Data 
+      var avg_span = d3.nest()
+        .key(function(d) { return d.quantile_group; })
+        .rollup(function(v) { return {
+            mean_time: d3.mean(v, function(d) { return d.spawn_time_total; })
+          };
+        })
+        .entries(data);
+      
+      console.log('Average Span Time:', avg_span);
+   
    });
 
 }
