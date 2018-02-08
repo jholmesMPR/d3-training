@@ -32,16 +32,18 @@ function buildChart(containerId) {
     //console.log('clean', data);
 
    //A
+    var wt = d3
+          .mean(data, function(d) {
+                    return d.weight_n;
+                });
 
-    var average_hw = d3.nest()
-      .key(function(d) { return d.name; })
-      .rollup(function(v) { return {
-        avg_height: d3.mean(v, function(d) { return d.height_n; }),
-        avg_weight: d3.mean(v, function(d) { return d.weight_n; })
-      }; })
-      .entries(data);
-    
-    console.log('Average ht (ft) and wt (lb): ', average_hw);
+    var ht = d3
+          .mean(data, function(d) {
+                    return d.height_n;
+                });
+
+    console.log('Mean weight (lb):', wt);
+    console.log('Mean height (ft):', ht);
 
   //B
 
@@ -61,7 +63,7 @@ function buildChart(containerId) {
       })
       .entries(data);
 
-  console.log('Average Egg Dist:', egg_value);
+  console.log('Sum of Egg Dist (ft):', egg_value);
 
   //C
   //Generate new json list called result to summarize
@@ -87,23 +89,15 @@ function buildChart(containerId) {
    avg_weakness_by_type.sort(function(x, y){
     return d3.descending(x.value, y.value);
    });
-  console.log('Sorted array of Avg. Weaknesses:',avg_weakness_by_type);
-      
-  // avg_weakness_by_type.sort(function(x, y){
-  //     return d3.ascending(x.num_weakness, y.num_weakness);
-  //   });
+  console.log('Sorted array of Avg. Weaknesses:', avg_weakness_by_type);
 
-   //console.log('Avg. Weakness by Type', avg_weakness_by_type);
-   // data.map(function(d) {
-   //    return d.year;})
-
-
+  // Max of the list
   var max = d3
           .max(avg_weakness_by_type, function(d) {
                     return d.value;
                 });
 
-  console.log("Max Avg. Weakness:", JSON.stringify(max));
+  console.log('Most Weaknesses on Avg.:', max);
 
   //D
     //Look at distributions
@@ -146,7 +140,7 @@ function buildChart(containerId) {
         })
         .entries(data);
       
-      console.log('Average Span Time:', avg_span);
+      console.log('Average Span by Weight Group:', avg_span);
    
    });
 
