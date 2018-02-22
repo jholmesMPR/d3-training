@@ -1,46 +1,61 @@
+var width = 960;
+var height = 600;
 
-function buildChart(containerId) {
-  // size globals
-    var width = 960;
-    var height = 500;
+var svg = d3.select("svg"),
+    width = svg.attr("width"),
+    height = svg.attr("height");
 
-    var margin = {
-        top: 50,
-        right: 50,
-        bottom: 50,
-        left: 50
-    };
+var color = d3.scaleOrdinal(d3.schemeCategory20);
 
-    // calculate dimensions without margins
-    var innerWidth = width - margin.left - margin.right;
-    var innerHeight = height - margin.top - margin.bottom;
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.id; }))
+    .force("charge", d3.forceManyBody())
+    .force("center", d3.forceCenter(width / 2, height / 2));
 
-    // create svg element
-    var svg = d3
-        .select(containerId)
-        .append('svg')
-        .attr('height', height)
-        .attr('width', width);
+d3.json("data/mpr.json", function(error, graph) {
+  if (error) throw error;
 
-    // create inner group element
-    var g = svg
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+  var link = svg.append("g")
+      .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+     // .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+     .attr("stroke-width", 1)
 
-	// append all of your chart elements to g
+  var node = svg.append("g")
+      .attr("class", "nodes")
+    .selectAll("circle")
+    .data(graph.nodes)
+    .enter().append("circle")
+      .attr("r", 5)
+      .attr("fill", "blue")
+      //.attr("fill", function(d) { return color(d.group); })
+      // .call(d3.drag()
+      //     .on("start", dragstarted)
+      //     .on("drag", dragged)
+      //     .on("end", dragended))
+      ;
 
-// read in our data
-    d3.json('data/climate.json', function(error, data) {
-        // handle read errors
-        if (error) {
-            console.error('failed to read data');
-            return;
-        }
+  // node.append("title")
+  //     .text(function(d) { return d.id; });
 
-        console.log('raw', data);
+  simulation
+      .nodes(graph.nodes)
+      .on("tick", ticked);
 
-    });
+  simulation.force("link")
+      .links(graph.links);
 
-}
+  function ticked() {
+    link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
 
-//buildChart('#bar-chart')
+    node
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+  }
+});
