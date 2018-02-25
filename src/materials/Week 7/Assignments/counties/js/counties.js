@@ -50,30 +50,49 @@ function buildChart(containerId) {
                 }
                 console.log('county14', cnty14);
 
-             d3.csv('data/laucnty15.csv', function(error, cnty15) {
-                if (error) {
-                    console.error('failed to read data');
-                    return;
-                }
-                console.log('county15', cnty15);
-
-                 d3.csv('data/laucnty16.csv', function(error, cnty16) {
+                d3.csv('data/laucnty15.csv', function(error, cnty15) {
                     if (error) {
                         console.error('failed to read data');
                         return;
                     }
-                    console.log('county16', cnty16);
+                    console.log('county15', cnty15);
 
-                    cntys = cnty12.concat(cnty13, cnty14, cnty15, cnty16)
+                    d3.csv('data/laucnty16.csv', function(error, cnty16) {
+                        if (error) {
+                            console.error('failed to read data');
+                            return;
+                        }
+                        console.log('county16', cnty16);
 
-                    console.log('counties', cntys);
 
+                        d3.json('data/us-counties.json', function(error, uscnty) {
+                            if (error) {
+                                console.error('failed to read data');
+                                return;
+                            }
+                            console.log('uscnty', uscnty);
+
+                            cntys = dm(cnty12, cnty13, cnty14, cnty15, cnty16);
+                            console.log('counties', cntys);
+
+
+                        });
                     });
                 });
             });
         });
     });
 
+
+    function dm(cnty12, cnty13, cnty14, cnty15, cnty16){
+
+        cntys = cnty12.concat(cnty13, cnty14, cnty15, cnty16);
+        cntys.forEach(function(d){
+            d.id = d.StateCode.concat(d.CountyCode);
+            d.pctUE = +d.Percent;
+        });
+        return cntys;
+    }
 }
 
 buildChart('#counties')
