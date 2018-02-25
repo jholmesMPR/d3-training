@@ -29,16 +29,49 @@ function buildChart(containerId) {
 
 	// append all of your chart elements to g
 
-// read in our data
-    d3.json('data/climate.json', function(error, data) {
-        // handle read errors
+    d3.csv('data/laucnty12.csv', function(error, cnty12) {
         if (error) {
             console.error('failed to read data');
             return;
         }
+        console.log('county12', cnty12);
 
-        console.log('raw', data);
+        d3.csv('data/laucnty13.csv', function(error, cnty13) {
+            if (error) {
+                console.error('failed to read data');
+                return;
+            }
+            console.log('county13', cnty13);
 
+            d3.csv('data/laucnty14.csv', function(error, cnty14) {
+                if (error) {
+                    console.error('failed to read data');
+                    return;
+                }
+                console.log('county14', cnty14);
+
+             d3.csv('data/laucnty15.csv', function(error, cnty15) {
+                if (error) {
+                    console.error('failed to read data');
+                    return;
+                }
+                console.log('county15', cnty15);
+
+                 d3.csv('data/laucnty16.csv', function(error, cnty16) {
+                    if (error) {
+                        console.error('failed to read data');
+                        return;
+                    }
+                    console.log('county16', cnty16);
+
+                    cntys = cnty12.concat(cnty13, cnty14, cnty15, cnty16)
+
+                    console.log('counties', cntys);
+
+                    });
+                });
+            });
+        });
     });
 
 }
