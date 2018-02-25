@@ -30,12 +30,12 @@ function buildChart(containerId) {
 	// append all of your chart elements to g
 
 // read in our data
-    d3.json('data/us-states.json', function(error, usstates) {
+    d3.json('data/us-states.json', function(error, geojson) {
         if (error) {
             console.error('failed to read data');
             return;
         }
-        console.log('raw_states', usstates);
+        console.log('raw_geojson', geojson);
 
         d3.csv('data/NSRDB_StationsMeta.csv', function(error, stations){
             if (error) {
@@ -44,12 +44,36 @@ function buildChart(containerId) {
             }
             console.log('raw_stations', stations);
 
-            draw(geojson, countries, cities);
+         draw(geojson);
+
         });
 
     });
 
-   function draw(geojson, countries, cities) {
+    function draw(geojson) {
+
+         var Proj = d3
+            .geoAlbersUsa()
+            //.scale(130)
+            //.rotate([71.110556, 0]) // rotate projection [yaw (east-west), pitch (north-south), roll (3rd axis)]
+            //.center([0, 42.373611]) // set center of projection
+            .translate([innerWidth / 2, innerHeight / 2]);
+
+        var geoPath = d3
+            .geoPath()
+            .projection(Proj);
+
+        g
+            .selectAll('path')
+            .data(geojson.features)
+            .enter()
+            .append('path')
+            .attr('d', geoPath)
+            .style('fill', 'black')
+            .style('stroke', 'white')
+            .style('stroke-width', 0.5);
+
+
         // geojson.features.forEach(function(f) {
         //     var pop = countries[f.properties.name];
         //     if (pop) {
@@ -57,41 +81,41 @@ function buildChart(containerId) {
         //     }
         // });
 
-        var opacityScale = d3
-            .scaleLinear()
-            .domain([0, 1.5e9])
-            .range([0, 1]);
+        // var opacityScale = d3
+        //     .scaleLinear()
+        //     .domain([0, 1.5e9])
+        //     .range([0, 1]);
 
-        var Proj = d3
-            .geoAlbersUsa()
-            .scale(130)
-            .center([0, 30])
-            .translate([innerWidth / 2, innerHeight / 2]);
+        // var Proj = d3
+        //     .geoAlbersUsa()
+        //     .scale(130)
+        //     .center([0, 30])
+        //     .translate([innerWidth / 2, innerHeight / 2]);
 
-        var geoPath = d3.geoPath().projection(Proj);
+        // var geoPath = d3.geoPath().projection(Proj);
 
         // g
         //     .selectAll('path')
         //     .data(geojson.features)
         //     .enter()
         //     .append('path')
-        //     .attr('d', geoPath)
-        //     .style('fill', function(d) {
-        //         if (d.properties.pop) {
-        //             return 'red';
-        //         } else {
-        //             return 'grey';
-        //         }
-        //     })
-        //     .style('stroke', 'black')
-        //     .style('stroke-width', 0.5)
-        //     .attr('fill-opacity', function(d) {
-        //         if (d.properties.pop) {
-        //             return opacityScale(d.properties.pop);
-        //         } else {
-        //             return 1;
-        //         }
-        //     });
+        //     .attr('d', geoPath);
+            // .style('fill', function(d) {
+            //     if (d.properties.pop) {
+            //         return 'red';
+            //     } else {
+            //         return 'grey';
+            //     }
+            // })
+            // .style('stroke', 'black')
+            // .style('stroke-width', 0.5)
+            // .attr('fill-opacity', function(d) {
+            //     if (d.properties.pop) {
+            //         return opacityScale(d.properties.pop);
+            //     } else {
+            //         return 1;
+            //     }
+            // });
 
         // g
         //     .selectAll('circle')
@@ -99,15 +123,18 @@ function buildChart(containerId) {
         //     .enter()
         //     .append('circle')
         //     .attr('cx', function(d) {
-        //         return mercatorProj(d.loc)[0];
+        //         return Proj(d.loc)[0];
         //     })
         //     .attr('cy', function(d) {
-        //         return mercatorProj(d.loc)[1];
+        //         return Proj(d.loc)[1];
         //     })
         //     .attr('r', 1.5)
         //     .attr('fill', 'black')
         //     .attr('stroke', 'none');
     }
+
+
+    
 }
 
 buildChart('#states')
