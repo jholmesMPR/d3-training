@@ -64,7 +64,25 @@ function buildChart(containerId) {
 
     function draw(geojson, stations) {
 
-        var color = d3.scaleOrdinal(d3.schemeCategory20);
+        var color = d3
+            .scaleOrdinal(d3.schemeCategory20);
+
+   // var y = d3  //y is the y-scale
+   //          .scaleBand() //used to map categorical variables
+   //          .domain(
+   //              data.map(function(d) {
+   //                  return d.year;
+   //              })
+   //          )
+   //          .range([innerHeight, 0])
+   //          .padding(0.01);
+
+        // var log = d3
+        //     .scaleLog()
+        //     .domain(data.map(function(d){
+        //         return d.elevation;
+        //     }))
+        //     .range([2, 9]);
 
         var Proj = d3
             .geoAlbersUsa()
@@ -108,13 +126,21 @@ function buildChart(containerId) {
             .append("circle")
             .attr("cx", function (d) { return Proj([d.longitude, d.latitude])[0]; })
             .attr("cy", function (d) { return Proj([d.longitude, d.latitude])[1]; })
-            .attr("r", "2px")
+           // .attr("r", function(d){return log(d.elevation;)})
+            .attr("r", "2.5px")
             .attr('fill', function(d) { return color(d.CLASS); });
 
+          // title
+        g
+            .append('text')
+            .attr('class', 'title')
+            .attr('x', innerWidth / 2)
+            .attr('y', -30)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .text('NSRDB Stations in the US')
+            .style("font", "24px times");
     }
-
-
-    
 }
 
 buildChart('#states')
