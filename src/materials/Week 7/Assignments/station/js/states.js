@@ -64,6 +64,8 @@ function buildChart(containerId) {
 
     function draw(geojson, stations) {
 
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
+
         var Proj = d3
             .geoAlbersUsa()
             .translate([innerWidth / 2, innerHeight / 2]);
@@ -72,23 +74,20 @@ function buildChart(containerId) {
             .geoPath()
             .projection(Proj);
 
-          //longitude, latitude   
-        var aa = [-177.383, 28.2];
-        var bb = [-122.389809, 37.72728];
+        //   //longitude, latitude   
+        // var aa = [-177.383, 28.2];
+        // var bb = [-122.389809, 37.72728];
 
-        //aa returns null, but bb does not
-        console.log('Proj_2_pix', Proj(aa), Proj(bb));
-        console.log('null', Proj(aa) !== null);
+        // //aa returns null, but bb does not
+        // console.log('Proj_2_pix', Proj(aa), Proj(bb));
+        // console.log('null', Proj(aa) !== null);
 
-        var new1 = []
-
-        stations.forEach(function(d){
-            new1.push([d.longitude, d.latitude]);
-        });
-
-
-        console.log('new1', new1);
-        console.log('Proj_test0', Proj(new1[0]));
+        // var new1 = []
+        // stations.forEach(function(d){
+        //     new1.push([d.longitude, d.latitude]);
+        // });
+        // console.log('new1', new1);
+        // console.log('Proj_test0', Proj(new1[0]));
 
 
         // states
@@ -109,8 +108,8 @@ function buildChart(containerId) {
             .append("circle")
             .attr("cx", function (d) { return Proj([d.longitude, d.latitude])[0]; })
             .attr("cy", function (d) { return Proj([d.longitude, d.latitude])[1]; })
-            .attr("r", "3px")
-            .attr("fill", "red")
+            .attr("r", "2px")
+            .attr('fill', function(d) { return color(d.CLASS); });
 
     }
 
