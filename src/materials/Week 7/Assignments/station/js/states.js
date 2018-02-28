@@ -1,4 +1,3 @@
-
 function buildChart(containerId) {
   // size globals
     var width = 960;
@@ -27,7 +26,7 @@ function buildChart(containerId) {
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-	// append all of your chart elements to g
+    // append all of your chart elements to g
 
 // read in our data
     d3.json('data/us-states.json', function(error, geojson) {
@@ -44,93 +43,75 @@ function buildChart(containerId) {
             }
             console.log('raw_stations', stations);
 
-         draw(geojson);
+        clean_stations = dm(stations);
+        console.log('clean_stations', clean_stations);
+        draw(geojson, clean_stations);
 
         });
 
     });
 
-    function draw(geojson) {
+     function dm(stations){
+        stations.forEach(function(d){
+            d.latitude = (+d.latitude);
+            d.longitude = (+d.longitude);
+            d.elevation = +d['NSRDB_ELEV (m)'];
+        })
 
-         var Proj = d3
+        return stations;
+    }
+
+
+    function draw(geojson, stations) {
+
+        var Proj = d3
             .geoAlbersUsa()
-            //.scale(130)
-            //.rotate([71.110556, 0]) // rotate projection [yaw (east-west), pitch (north-south), roll (3rd axis)]
-            //.center([0, 42.373611]) // set center of projection
             .translate([innerWidth / 2, innerHeight / 2]);
 
         var geoPath = d3
             .geoPath()
             .projection(Proj);
 
-        g
-            .selectAll('path')
-            .data(geojson.features)
-            .enter()
-            .append('path')
-            .attr('d', geoPath)
-            .style('fill', 'black')
-            .style('stroke', 'white')
-            .style('stroke-width', 0.5);
+          //longitude, latitude   
+        var aa = [-177.383, 28.2];
+        var bb = [-122.389809, 37.72728];
+
+        //aa returns null, but bb does not
+        console.log('Proj_2_pix', Proj(aa), Proj(bb));
+        console.log('null', Proj(aa) !== null);
+
+        var new1 = []
+
+        stations.forEach(function(d){
+            new1.push([d.longitude, d.latitude]);
+        });
 
 
-        // geojson.features.forEach(function(f) {
-        //     var pop = countries[f.properties.name];
-        //     if (pop) {
-        //         f.properties.pop = pop;
-        //     }
-        // });
+        console.log('new1', new1);
+        console.log('Proj_test0', Proj(new1[0]));
 
-        // var opacityScale = d3
-        //     .scaleLinear()
-        //     .domain([0, 1.5e9])
-        //     .range([0, 1]);
 
-        // var Proj = d3
-        //     .geoAlbersUsa()
-        //     .scale(130)
-        //     .center([0, 30])
-        //     .translate([innerWidth / 2, innerHeight / 2]);
+        // states
+        g.selectAll("path")
+          .data(geojson.features).enter()
+          .append("path")
+          .attr("d", geoPath)
+          .attr("class", "feature")
+          .style("fill", "black")
+          .style('stroke', 'white')
+          .style('stroke-width', 0.5);
 
-        // var geoPath = d3.geoPath().projection(Proj);
+         g.selectAll("circle")
+            .data(stations).enter()
+            .filter(function(d){
+             return Proj([d.longitude, d.latitude]) !== null;
+            })
+            .append("circle")
+            .attr("cx", function (d) { return Proj([d.longitude, d.latitude])[0]; })
+            .attr("cy", function (d) { return Proj([d.longitude, d.latitude])[1]; })
+            .attr("r", "3px")
+            .attr("fill", "red")
 
-        // g
-        //     .selectAll('path')
-        //     .data(geojson.features)
-        //     .enter()
-        //     .append('path')
-        //     .attr('d', geoPath);
-            // .style('fill', function(d) {
-            //     if (d.properties.pop) {
-            //         return 'red';
-            //     } else {
-            //         return 'grey';
-            //     }
-            // })
-            // .style('stroke', 'black')
-            // .style('stroke-width', 0.5)
-            // .attr('fill-opacity', function(d) {
-            //     if (d.properties.pop) {
-            //         return opacityScale(d.properties.pop);
-            //     } else {
-            //         return 1;
-            //     }
-            // });
-
-        // g
-        //     .selectAll('circle')
-        //     .data(cities)
-        //     .enter()
-        //     .append('circle')
-        //     .attr('cx', function(d) {
-        //         return Proj(d.loc)[0];
-        //     })
-        //     .attr('cy', function(d) {
-        //         return Proj(d.loc)[1];
-        //     })
-        //     .attr('r', 1.5)
-        //     .attr('fill', 'black')
-        //     .attr('stroke', 'none');
     }
 
 
