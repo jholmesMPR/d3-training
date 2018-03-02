@@ -7,7 +7,7 @@ function buildChart(containerId) {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 50
+        left: 200
     };
 
     // calculate dimensions without margins
@@ -21,7 +21,7 @@ function buildChart(containerId) {
         .attr('height', height)
         .attr('width', width);
 
-    // create inner group element
+    // create inner group elem
     var g = svg
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
@@ -46,6 +46,7 @@ function buildChart(containerId) {
         clean_stations = dm(stations);
         console.log('clean_stations', clean_stations);
         draw(geojson, clean_stations);
+        //addlegend(geojson, clean_stations);
 
         });
 
@@ -118,7 +119,6 @@ function buildChart(containerId) {
             .attr("cx", function (d) { return Proj([d.longitude, d.latitude])[0]; })
             .attr("cy", function (d) { return Proj([d.longitude, d.latitude])[1]; })
             .attr("r", function(d){return logElevation(d.elevation); })
-           // .attr("r", 2.5)
             .attr('fill', function(d) { return color(d.CLASS); });
 
           // title
@@ -132,10 +132,114 @@ function buildChart(containerId) {
             .text('NSRDB Stations in the US')
             .style("font", "24px times");
 
-        //legend
-    //       var legendRectSize = 18;
-    //       var legendSpacing = 4;
-     }
+
+        var radius = 10;
+        var legendSize = 27;
+        var legendSpacing = 6;
+
+        var legend = d3.select('svg')
+            .append("g")
+            .selectAll("g")
+            .data(color.domain())
+            .enter()
+            .append('g')
+              .attr('class', 'legend')
+              .attr('transform', function(d, i) {
+                var height = legendSize;
+                var x = 0;
+                var y = i * height;
+                return 'translate(' + x + ',' + y + ')';
+        });
+
+        legend.append('rect')
+            .attr('width', legendSize)
+            .attr('height', legendSize)
+            .style('fill', color)
+            .style('stroke', color);
+
+        legend.append('text')
+            .attr('x', legendSize + legendSpacing)
+            .attr('y', legendSize - legendSpacing)
+            .text(function(d) { return d; });
+
+
+     //    var legend = d3.select('svg')
+     //            .append("g")
+     //            .selectAll("g")
+     //            .data(color.domain())
+     //            .enter()
+     //            .append('g')
+     //              .attr('class', 'legend')
+     //              .attr('transform', function(d, i) {
+     //                var height = legendSize;
+     //                var x = 30;
+     //                var y = i * height + 30;
+     //                return 'translate(' + x + ',' + y + ')';
+     //            });
+
+     //    legend.append('circle')
+     //          .attr('r', radius)
+     //          .style('fill', color)
+     //          .style('stroke', color);
+
+     //    legend.append('text')
+     //          .attr('x', legendSize + legendSpacing)
+     //          .attr('y', legendSize - legendSpacing)
+     //          .text(function(d) { return d.CLASS; });
+
+      }
+
+     
+
+    // function addlegend(geojson, stations){
+    //     //Elements to create legend
+    //     var color = d3
+    //         .scaleOrdinal(d3.schemeCategory20);
+
+    //     var logElevation = d3
+    //         .scaleLog()
+    //         .domain(
+    //             stations.map(function(d){
+    //             return d.elevation;
+    //         }))
+    //         .range([2, 15]);
+
+
+
+    //     var radius = 7;
+    //     var legendSize = 18;
+    //     var legendSpacing = 4;
+
+
+    //     var legend = d3.select('svg')
+    //             .append("g")
+    //             .selectAll("g")
+    //             .data(color.domain())
+    //             .enter()
+    //             .append('g')
+    //               .attr('class', 'legend')
+    //               .attr('transform', function(d, i) {
+    //                 var height = legendSize;
+    //                 var x = 0;
+    //                 var y = i * height;
+    //                 return 'translate(' + x + ',' + y + ')';
+    //             });
+    //     legend.append('rect')
+    //           .attr('width', legendSize)
+    //           .attr('height', legendSize)
+    //           .style('fill', color)
+    //           .style('stroke', color);
+
+    //     // legend.append('circle')
+    //     //       .attr('r', radius)
+    //     //       .style('fill', color)
+    //     //       .style('stroke', color);
+
+    //     // legend.append('text')
+    //     //       .attr('x', legendSize + legendSpacing)
+    //     //       .attr('y', legendSize - legendSpacing)
+    //     //       .text(function(d) { return d.CLASS; });
+    // }
 }
 
 buildChart('#states')
