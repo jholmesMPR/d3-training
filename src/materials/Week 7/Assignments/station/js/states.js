@@ -136,44 +136,52 @@ function buildChart(containerId) {
 
         //Legends
         var radius1 = 10;
-        var y1 = 30;
-        var x1 = 30;
+        var y1 = 40;
+        var x1 = 40;
         var spacing1 = 27;
+        var w = 100;
+        var h = 500;
 
-        var g2 = d3
-            .select('svg')
-            // .append('text')
-            //     .attr('class', 'title')
-            //     .attr('x', 100 / 2)
-            //     .attr('y', 20)
-            //     .attr('text-anchor', 'middle')
-            //     .attr('dominant-baseline', 'baseline')
-            //     .text('Class')
-            //     .style("font", "16px times")
-            .append("g");
+        var legend = d3
+                .select(containerId)
+                .append('svg')
+                .attr('height', h)
+                .attr('width', w)
+                .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
+
+        legend.append('text')
+                .attr('class', 'title')
+                .attr('x', w / 2)
+                .attr('y', 20)
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'baseline')
+                .text('Class')
+                .style("font", "16px times");
+
+        var g2 = legend
+                .append("g")
                 .selectAll("g")
                 .data(color.domain())
                 .enter()
                 .append('g')
-                .attr('class', 'legend')
-        ;
+                .attr('class', 'dots');
 
-        legend.append('circle')
-              .attr('r', radius1)
-              .attr('cx', x1)
-              .attr('cy', function(d, i){
-                return i * spacing1 + y1;
-                })
-              .style('fill', color)
-              .style('stroke', color)
-              ;
+            g2.append('circle')
+                  .attr('r', radius1)
+                  .attr('cx', x1)
+                  .attr('cy', function(d, i){
+                    return i * spacing1 + y1;
+                    })
+                  .style('fill', color)
+                  .style('stroke', color)
+                  ;
 
-        legend.append('text')
-            .attr('x', x1 + 20)
-            .attr('y', function(d, i){
-                return i * spacing1 + y1 + radius1/2;
-                })
-            .text(function(d) { return d; });
+            g2.append('text')
+                .attr('x', x1 + 20)
+                .attr('y', function(d, i){
+                    return i * spacing1 + y1 + radius1/2;
+                    })
+                .text(function(d) { return d; });
 
       }
 
