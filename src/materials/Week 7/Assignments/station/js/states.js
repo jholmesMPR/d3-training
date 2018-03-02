@@ -7,7 +7,7 @@ function buildChart(containerId) {
         top: 50,
         right: 50,
         bottom: 50,
-        left: 200
+        left: 50
     };
 
     // calculate dimensions without margins
@@ -102,7 +102,8 @@ function buildChart(containerId) {
 
         // states
         g.selectAll("path")
-          .data(geojson.features).enter()
+          .data(geojson.features)
+          .enter()
           .append("path")
           .attr("d", geoPath)
           .attr("class", "feature")
@@ -111,7 +112,8 @@ function buildChart(containerId) {
           .style('stroke-width', 0.5);
 
          g.selectAll("circle")
-            .data(stations).enter()
+            .data(stations)
+            .enter()
             .filter(function(d){
              return Proj([d.longitude, d.latitude]) !== null;
             })
@@ -132,132 +134,52 @@ function buildChart(containerId) {
             .text('NSRDB Stations in the US')
             .style("font", "24px times");
 
+        //Legends
+        var radius1 = 10;
+        var y1 = 30;
+        var x1 = 30;
+        var spacing1 = 27;
 
-        // var radius = 10;
-        // var legendSize = 27;
-        // var legendSpacing = 20;
-
-        //y shifts every
-        var legend = d3
+        var g2 = d3
             .select('svg')
-            .append("g")
-            .selectAll("g")
-            .data(color.domain())
-            .enter()
-            .append('g')
-            .attr('class', 'legend')
+            // .append('text')
+            //     .attr('class', 'title')
+            //     .attr('x', 100 / 2)
+            //     .attr('y', 20)
+            //     .attr('text-anchor', 'middle')
+            //     .attr('dominant-baseline', 'baseline')
+            //     .text('Class')
+            //     .style("font", "16px times")
+            .append("g");
+                .selectAll("g")
+                .data(color.domain())
+                .enter()
+                .append('g')
+                .attr('class', 'legend')
         ;
 
-        var radius = 10;
-        var y = 30;
-        var x = 30;
-        var spacing = 27;
-
         legend.append('circle')
-              .attr('r', radius)
-              .attr('cx', x)
+              .attr('r', radius1)
+              .attr('cx', x1)
               .attr('cy', function(d, i){
-                return i * spacing + y;
+                return i * spacing1 + y1;
                 })
               .style('fill', color)
               .style('stroke', color)
               ;
 
         legend.append('text')
-            .attr('x', x + 20)
+            .attr('x', x1 + 20)
             .attr('y', function(d, i){
-                return i * spacing + y + radius/2;
+                return i * spacing1 + y1 + radius1/2;
                 })
             .text(function(d) { return d; });
-
-         g
-            .append('text')
-            .attr('class', 'title')
-            .attr('x', x / 2)
-            .attr('y', 15)
-            .attr('text-anchor', 'middle')
-            .attr('dominant-baseline', 'baseline')
-            .text('Class')
-            .style("font", "24px times");
-
-
-     //    var legend = d3.select('svg')
-     //            .append("g")
-     //            .selectAll("g")
-     //            .data(color.domain())git
-     //            .enter()
-     //            .append('g')
-     //              .attr('class', 'legend')
-     //              .attr('transform', function(d, i) {
-     //                var height = legendSize;
-     //                var x = 30;
-     //                var y = i * height + 30;
-     //                return 'translate(' + x + ',' + y + ')';
-     //            });
-
-     //    legend.append('circle')
-     //          .attr('r', radius)
-     //          .style('fill', color)
-     //          .style('stroke', color);
-
-     //    legend.append('text')
-     //          .attr('x', legendSize + legendSpacing)
-     //          .attr('y', legendSize - legendSpacing)
-     //          .text(function(d) { return d.CLASS; });
 
       }
 
      
 
-    // function addlegend(geojson, stations){
-    //     //Elements to create legend
-    //     var color = d3
-    //         .scaleOrdinal(d3.schemeCategory20);
-
-    //     var logElevation = d3
-    //         .scaleLog()
-    //         .domain(
-    //             stations.map(function(d){
-    //             return d.elevation;
-    //         }))
-    //         .range([2, 15]);
-
-
-
-    //     var radius = 7;
-    //     var legendSize = 18;
-    //     var legendSpacing = 4;
-
-
-    //     var legend = d3.select('svg')
-    //             .append("g")
-    //             .selectAll("g")
-    //             .data(color.domain())
-    //             .enter()
-    //             .append('g')
-    //               .attr('class', 'legend')
-    //               .attr('transform', function(d, i) {
-    //                 var height = legendSize;
-    //                 var x = 0;
-    //                 var y = i * height;
-    //                 return 'translate(' + x + ',' + y + ')';
-    //             });
-    //     legend.append('rect')
-    //           .attr('width', legendSize)
-    //           .attr('height', legendSize)
-    //           .style('fill', color)
-    //           .style('stroke', color);
-
-    //     // legend.append('circle')
-    //     //       .attr('r', radius)
-    //     //       .style('fill', color)
-    //     //       .style('stroke', color);
-
-    //     // legend.append('text')
-    //     //       .attr('x', legendSize + legendSpacing)
-    //     //       .attr('y', legendSize - legendSpacing)
-    //     //       .text(function(d) { return d.CLASS; });
-    // }
+  
 }
 
 buildChart('#states')
