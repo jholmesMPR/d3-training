@@ -133,36 +133,52 @@ function buildChart(containerId) {
             .style("font", "24px times");
 
 
-        var radius = 10;
-        var legendSize = 27;
-        var legendSpacing = 20;
+        // var radius = 10;
+        // var legendSize = 27;
+        // var legendSpacing = 20;
 
         //y shifts every
-        var legend = d3.select('svg')
+        var legend = d3
+            .select('svg')
             .append("g")
             .selectAll("g")
             .data(color.domain())
             .enter()
             .append('g')
-              .attr('class', 'legend')
-              .attr('transform', function(d, i) {
-                var height = legendSize;
-                var x = 15;
-                var y = i * height + 20;
-                return 'translate(' + x + ',' + y + ')';
-        });
+            .attr('class', 'legend')
+        ;
+
+        var radius = 10;
+        var y = 30;
+        var x = 30;
+        var spacing = 27;
 
         legend.append('circle')
               .attr('r', radius)
-              .attr('cx', legendSize + legendSpacing)
-              .attr('cy', legendSize - legendSpacing)
+              .attr('cx', x)
+              .attr('cy', function(d, i){
+                return i * spacing + y;
+                })
               .style('fill', color)
-              .style('stroke', color);
+              .style('stroke', color)
+              ;
 
         legend.append('text')
-            .attr('x', legendSize + legendSpacing)
-            .attr('y', legendSize - legendSpacing)
+            .attr('x', x + 20)
+            .attr('y', function(d, i){
+                return i * spacing + y + radius/2;
+                })
             .text(function(d) { return d; });
+
+         g
+            .append('text')
+            .attr('class', 'title')
+            .attr('x', x / 2)
+            .attr('y', 15)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .text('Class')
+            .style("font", "24px times");
 
 
      //    var legend = d3.select('svg')
