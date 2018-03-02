@@ -34,17 +34,18 @@ var simulation = d3.forceSimulation()
     .force("collide", d3.forceCollide().radius(3))
     .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2));
 
-d3.json("data/health.json", function(error, graph) {
+d3.json("data/mpr.json", function(error, graph) {
    if (error) {
           console.error('failed to read data');
           return;
       }
-      drawNetwork(graph)
+      initialDivision = "Health"
+      drawNetwork(graph, initialDivision);
+      //additional();
     });
 
-  function drawNetwork(graph){
+  function drawNetwork(graph, initialDivision){
     // dimensions
-
    var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.id; }))
     .force("charge", d3.forceManyBody().strength(-15))
@@ -52,9 +53,13 @@ d3.json("data/health.json", function(error, graph) {
     .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2));
 
     // set the nodes
-    var nodes = graph.nodes;
+    var nodes = graph.nodes
+     .filter(function(d) { return d.division == initialDivision |
+                                  d.id == "Paul Decker"});
     // links between nodes}
-    var links = graph.links;
+    var links = graph.links
+     .filter(function(d) { return d.division == initialDivision |
+                                  d.id == "Paul Decker"});
     
     // add the curved links to our graphic
     var link = svg.selectAll(".link")
@@ -69,7 +74,8 @@ d3.json("data/health.json", function(error, graph) {
     // add the nodes to the graphic
     var node = svg.selectAll(".node")
         .data(nodes)
-        .enter().append("g")
+        .enter()
+        .append("g");
 
     // a circle to represent the node
     node.append("circle")
@@ -89,19 +95,10 @@ d3.json("data/health.json", function(error, graph) {
         .text(function(d) {
             return d.id;
         })
-        .style("stroke", "black")
-        .style("font", "8px Arial");
-        //.style("stroke-width", 0.5);
-
-     g
-        .append('text')
-        .attr('class', 'title')
-        .attr('x', innerWidth / 2)
-        .attr('y', -40)
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'baseline')
-        .style("font", "24px Arial")
-        .text('Network of MPR Divisions');
+        .style("fill", "#555")
+        .style("fill-opacity", 0)
+        .style("font-family", "Arial")
+        .style("font-size", 10);
 
     // add the nodes to the simulation and
     // tell it what to do on each tick
@@ -118,14 +115,12 @@ d3.json("data/health.json", function(error, graph) {
     function ticked() {
         link.attr("d", positionLink);
         node.attr("transform", positionNode);
-        // labels.attr('x', function(d) { return d.x; })
-        //   .attr('y', function(d) { return d.y; });
     }
 
     // links are drawn as curved paths between nodes,
     // through the intermediate nodes
     function positionLink(d) {
-        var offset = 0;
+        var offset = 10;
 
         var midpoint_x = (d.source.x + d.target.x) / 2;
         var midpoint_y = (d.source.y + d.target.y) / 2;
@@ -194,6 +189,14 @@ d3.json("data/health.json", function(error, graph) {
                 thisOpacity = isConnected(d, o) ? 1 : opacity;
                 return thisOpacity;
             });
+
+            node.selectAll('.labels')
+            //.attr('class', 'labels')
+                .style('fill-opacity', function(o){
+                thisOpacity = isConnected(d, o) ? 1 : 0;
+                return thisOpacity;
+                });            
+
             // also style link accordingly
             link.style("stroke-opacity", function(o) {
                 return o.source === d || o.target === d ? 1 : opacity;
@@ -201,6 +204,7 @@ d3.json("data/health.json", function(error, graph) {
             link.style("stroke", function(o){
                 return o.source === d || o.target === d ? o.source.colour : "#ddd";
             });
+
         };
     }
 
@@ -211,27 +215,48 @@ d3.json("data/health.json", function(error, graph) {
         link.style("stroke", "#ddd");
     }
 
-    function searchNode() {
-      //find the node
-      var selectedVal = document.getElementById('search').value;
-      //node = svg.selectAll(".node");
-      if (selectedVal == "none") {
-          node.style("stroke", "white").style("stroke-width", "1");
-      } else {
-          var selected = node.filter(function (d, i) {
-              return d.id != selectedVal;
-          });
-          selected.style("opacity", "0");
-          //var link = svg.selectAll(".link")
-          link.style("opacity", "0");
-          d3.selectAll(".node, .link").transition()
-              .duration(5000)
-              .style("opacity", 1);
-      }
-    }
+    // function searchNode() {
+    //   //find the node
+    //   var selectedVal = document.getElementById('search').value;
+    //   //node = svg.selectAll(".node");
+    //   if (selectedVal == "none") {
+    //       node.style("stroke", "white").style("stroke-width", "1");
+    //   } else {
+    //       var selected = node.filter(function (d, i) {
+    //           return d.id != selectedVal;
+    //       });
+    //       selected.style("opacity", "0");
+    //       //var link = svg.selectAll(".link")
+    //       link.style("opacity", "0");
+    //       d3.selectAll(".node, .link").transition()
+    //           .duration(5000)
+    //           .style("opacity", 1);
+    //   }
+    // }
 
     }
 
+
+    function additional(){
+      var choices = ["Health", "Human Serivces", "International", "Admin"];
+
+     // Create a dropdown
+      var Menu = d3.select("#dropdown")
+
+      Menu
+      .append("select")
+      .selectAll("option")
+          .data(choices)
+          .enter()
+          .append("option")
+          .attr("value", function(d){
+              return d;
+          })
+          .text(function(d){
+              return d;
+          })
+          ;
+    }
 
 }
 
