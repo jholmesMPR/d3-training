@@ -135,8 +135,9 @@ function buildChart(containerId) {
 
         var radius = 10;
         var legendSize = 27;
-        var legendSpacing = 6;
+        var legendSpacing = 20;
 
+        //y shifts every
         var legend = d3.select('svg')
             .append("g")
             .selectAll("g")
@@ -146,16 +147,17 @@ function buildChart(containerId) {
               .attr('class', 'legend')
               .attr('transform', function(d, i) {
                 var height = legendSize;
-                var x = 0;
-                var y = i * height;
+                var x = 15;
+                var y = i * height + 20;
                 return 'translate(' + x + ',' + y + ')';
         });
 
-        legend.append('rect')
-            .attr('width', legendSize)
-            .attr('height', legendSize)
-            .style('fill', color)
-            .style('stroke', color);
+        legend.append('circle')
+              .attr('r', radius)
+              .attr('cx', legendSize + legendSpacing)
+              .attr('cy', legendSize - legendSpacing)
+              .style('fill', color)
+              .style('stroke', color);
 
         legend.append('text')
             .attr('x', legendSize + legendSpacing)
@@ -166,7 +168,7 @@ function buildChart(containerId) {
      //    var legend = d3.select('svg')
      //            .append("g")
      //            .selectAll("g")
-     //            .data(color.domain())
+     //            .data(color.domain())git
      //            .enter()
      //            .append('g')
      //              .attr('class', 'legend')
