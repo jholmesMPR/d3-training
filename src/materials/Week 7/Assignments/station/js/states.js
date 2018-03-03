@@ -46,19 +46,22 @@ function buildChart(containerId) {
         clean_stations = dm(stations);
         console.log('clean_stations', clean_stations);
         draw(geojson, clean_stations);
-        //addlegend(geojson, clean_stations);
+        //addLegend();
 
         });
 
     });
 
      function dm(stations){
+
         stations.forEach(function(d){
             d.latitude = (+d.latitude);
             d.longitude = (+d.longitude);
             d.elevation = +d['NSRDB_ELEV (m)'];
+            if(d.elevation <= 0){
+                return d.elevation = 1;
+            }
         })
-
         return stations;
     }
 
@@ -71,10 +74,11 @@ function buildChart(containerId) {
         var logElevation = d3
             .scaleLog()
             .domain(
-                stations.map(function(d){
+              stations.map(function(d) {
                 return d.elevation;
-            }))
-            .range([2,9]);
+              })
+            )
+            .range([9, 8,7,6, 5, 4, 3, 2]);
 
         var Proj = d3
             .geoAlbersUsa()
@@ -83,6 +87,10 @@ function buildChart(containerId) {
         var geoPath = d3
             .geoPath()
             .projection(Proj);
+
+            console.log(d3.extent(stations, function(d) {
+                    return d.elevation;
+                }));
 
         //   //longitude, latitude   
         // var aa = [-177.383, 28.2];
@@ -120,9 +128,10 @@ function buildChart(containerId) {
             .append("circle")
             .attr("cx", function (d) { return Proj([d.longitude, d.latitude])[0]; })
             .attr("cy", function (d) { return Proj([d.longitude, d.latitude])[1]; })
-            .attr("r", function(d){return logElevation(d.elevation); })
+            .attr("r", function(d){console.log(logElevation(d.elevation)); return logElevation(d.elevation); })
             .attr('fill', function(d) { return color(d.CLASS); });
 
+        //console.log(logElevation(elevation[0]));
           // title
         g
             .append('text')
@@ -134,31 +143,32 @@ function buildChart(containerId) {
             .text('NSRDB Stations in the US')
             .style("font", "24px times");
 
-        //Legends
+
+        //Legend 1
         var radius1 = 10;
         var y1 = 40;
         var x1 = 40;
         var spacing1 = 27;
-        var w = 100;
-        var h = 500;
+        var w1 = 100;
+        var h1 = 500;
 
-        var legend = d3
+        var legend1 = d3
                 .select(containerId)
                 .append('svg')
-                .attr('height', h)
-                .attr('width', w)
+                .attr('height', h1)
+                .attr('width', w1)
                 .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
 
-        legend.append('text')
+        legend1.append('text')
                 .attr('class', 'title')
-                .attr('x', w / 2)
+                .attr('x', w1 / 2)
                 .attr('y', 20)
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'baseline')
                 .text('Class')
                 .style("font", "16px times");
 
-        var g2 = legend
+        var g2 = legend1
                 .append("g")
                 .selectAll("g")
                 .data(color.domain())
@@ -173,8 +183,7 @@ function buildChart(containerId) {
                     return i * spacing1 + y1;
                     })
                   .style('fill', color)
-                  .style('stroke', color)
-                  ;
+                  .style('stroke', color);
 
             g2.append('text')
                 .attr('x', x1 + 20)
@@ -183,9 +192,53 @@ function buildChart(containerId) {
                     })
                 .text(function(d) { return d; });
 
-      }
 
-     
+        //Legend 2
+        var radius2 = 10;
+        var y2 = 40;
+        var x2 = 40;
+        var spacing2 = 27;
+        var w2 = 100;
+        var h2 = 500;
+
+        var legend2 = d3
+                .select(containerId)
+                .append('svg')
+                .attr('height', h2)
+                .attr('width', w2)
+                .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
+
+        legend2.append('text')
+                .attr('class', 'title')
+                .attr('x', w2 / 2)
+                .attr('y', 20)
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'baseline')
+                .text('Elevation')
+                .style("font", "16px times");
+
+        var g2 = legend2
+                .append("g")
+                .selectAll("g")
+                .data(logElevation.domain())
+                .enter()
+                .append('g')
+                .attr('class', 'dots');
+
+            g2.append('circle')
+                  .attr('r', logElevation)
+                  .attr('cx', x2)
+                  .attr('cy', function(d, i){
+                    return i * spacing2 + y2;
+                    });
+
+            g2.append('text')
+                .attr('x', x2 + 20)
+                .attr('y', function(d, i){
+                    return i * spacing2 + y2 + radius2/2;
+                    })
+                .text(function(d) { return d; });
+        }
 
   
 }
