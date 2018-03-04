@@ -65,19 +65,18 @@ function buildChart(containerId) {
                         console.log('county16', cnty16);
 
 
-                        d3.json('data/us-counties.json', function(error, uscnty) {
+                        d3.json('data/us-counties.json', function(error, geojson) {
                             if (error) {
                                 console.error('failed to read data');
                                 return;
                             }
-                            console.log('uscnty', uscnty);
+                            console.log('geojson', geojson);
 
-                            cntys = dm(cnty12, cnty13, cnty14, cnty15, cnty16);
-                            console.log('counties', cntys);
+                            data = dm(cnty12, cnty13, cnty14, cnty15, cnty16, geojson);
+                            console.log('data', data);
 
-                            all = merge(cntys, uscnty);
-                            console.log('all', all);
-
+                            chloro(data);
+                           
                         });
                     });
                 });
@@ -86,32 +85,62 @@ function buildChart(containerId) {
     });
 
     //function dm performs necessary data management steps for the data
-    function dm(cnty12, cnty13, cnty14, cnty15, cnty16){
+    function dm(cnty12, cnty13, cnty14, cnty15, cnty16, geojson){
+
         //Appends data together
         cntys = cnty12.concat(cnty13, cnty14, cnty15, cnty16);
 
         //Create New Variables
         cntys.forEach(function(d){
-            d.id = d.StateCode.concat(d.CountyCode);
+            d.id = +d.StateCode.concat(d.CountyCode);
             d.pctUE = +d.Percent;
         });
+        //console.log('counties', cntys);
 
-        return cntys;
-    }
-
-    function merge(cntys, uscnty){
-     //Merge US Counties with Counties12 - Counties16
-        uscnty.forEach(function(cty) {
-            var result = cntys.filter(function(d) {
-                return d.id === cty.id;
-            });
-        //delete cty.id;
-        //cty.pctUE = (result[0] !== undefined) ? result[0].name : null;
+        var o = [];
+        geojson.features.forEach(function(v) {
+          cntys.forEach(function(w) {
+            if (v.id === w.id) {
+              o.push([v, w]);
+            }
+          });
         });
 
-        return result;
-
+        //console.log('merge', o);
     }
+
+    // function chloro(cnty, geojson){
+            
+    //     var color = d3.scaleThreshold()
+    //         .domain(d3.extent(cnty, function(d) {
+    //                 return d.pctUE;
+    //             });
+    //         )
+    //         .range(d3.schemeBlues[9]);
+
+    //     var path = d3.geoPath();
+
+        
+    //     g.append("g")
+    //       .attr("class", "counties")
+    //      .selectAll("path")
+    //      .data(geojson.features)
+    //      .enter()
+    //      .append("path")
+    //      // .attr("fill", function(d) { return color(d.rate = unemployment.get(d.id)); })
+    //       .attr("d", path)
+    //     .append("title")
+    //     .text("Title");
+    //      // .text(function(d) { return d.rate + "%"; });
+
+    //   // svg.append("path")
+    //   //     .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+    //   //     .attr("class", "states")
+    //   //     .attr("d", path);
+
+    // }
+
+    
 }
 
 buildChart('#counties')
