@@ -1,7 +1,7 @@
 function buildChart(containerId) {
   // size globals
     var width = 960;
-    var height = 500;
+    var height = 600;
 
     var margin = {
         top: 50,
@@ -26,8 +26,6 @@ function buildChart(containerId) {
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    // append all of your chart elements to g
-
 // read in our data
     d3.json('data/us-states.json', function(error, geojson) {
         if (error) {
@@ -46,7 +44,6 @@ function buildChart(containerId) {
         clean_stations = dm(stations);
         console.log('clean_stations', clean_stations);
         draw(geojson, clean_stations);
-        //addLegend();
 
         });
 
@@ -74,11 +71,80 @@ function buildChart(containerId) {
         var logElevation = d3
             .scaleLog()
             .domain(
-              stations.map(function(d) {
+              d3.extent(stations, function(d){
                 return d.elevation;
               })
             )
-            .range([9, 8,7,6, 5, 4, 3, 2]);
+            .range([2, 15]); //Will always have a continiuous output range because that's how the scale is set up
+
+        var o = .8;
+
+        stations.forEach(function(d){
+          d.logElev = logElevation(d.elevation);
+          if(d.logElev >= 2 & d.logElev < 3){
+            d.logGroup = 2.5;
+          }
+          if(d.logElev >= 3 & d.logElev < 4){
+            d.logGroup = 3.5;
+          }
+          if(d.logElev >= 4 & d.logElev < 5){
+            d.logGroup = 4.5;
+          }
+          if(d.logElev >= 5 & d.logElev < 6){
+            d.logGroup = 5.5;
+          }
+          if(d.logElev >= 6 & d.logElev < 7){
+            d.logGroup = 6.5;
+          }
+          if(d.logElev >= 7 & d.logElev < 8){
+            d.logGroup = 7.5;
+          }
+          if(d.logElev >= 8 & d.logElev < 9){
+            d.logGroup = 8.5;
+          }
+          if(d.logElev >= 9 & d.logElev < 10){
+            d.logGroup = 9.5;
+          }
+          if(d.logElev >= 10 & d.logElev < 11){
+            d.logGroup = 10.5;
+          }
+          if(d.logElev >= 11 & d.logElev < 12){
+            d.logGroup = 11.5;
+          }
+          if(d.logElev >= 12 & d.logElev < 13){
+            d.logGroup = 12.5;
+          }
+          if(d.logElev >= 13 & d.logElev < 14){
+            d.logGroup = 13.5;
+          }
+          if(d.logElev >= 14 & d.logElev <= 15){
+            d.logGroup = 14.5;
+          }
+        });
+
+        var f = d3.format(".1f");
+
+        var elevation = d3.nest()
+            .key(function(d) { return d.logGroup; })
+            .rollup(function(v) { 
+            return {
+                count: v.length,
+                min: f(d3.min(v, function(d) { return d.elevation; })),
+                max: f(d3.mean(v, function(d) { return d.elevation; }))
+              }; 
+            })
+            .entries(stations);
+
+        elevation.forEach(function(d){
+            d.value.range = d.value.min.concat(' - ', d.value.max, ' ft.');
+            d.key = +d.key;
+        });
+
+        elevation.sort(function(x, y){
+            return d3.ascending(x.key, y.key);
+        });
+
+        console.log('Elevation', elevation);
 
         var Proj = d3
             .geoAlbersUsa()
@@ -88,9 +154,9 @@ function buildChart(containerId) {
             .geoPath()
             .projection(Proj);
 
-            console.log(d3.extent(stations, function(d) {
-                    return d.elevation;
-                }));
+            // console.log(d3.extent(stations, function(d) {
+            //         return d.elevation;
+            //     }));
 
         //   //longitude, latitude   
         // var aa = [-177.383, 28.2];
@@ -128,10 +194,10 @@ function buildChart(containerId) {
             .append("circle")
             .attr("cx", function (d) { return Proj([d.longitude, d.latitude])[0]; })
             .attr("cy", function (d) { return Proj([d.longitude, d.latitude])[1]; })
-            .attr("r", function(d){console.log(logElevation(d.elevation)); return logElevation(d.elevation); })
-            .attr('fill', function(d) { return color(d.CLASS); });
+            .attr("r", function(d){ return d.logElev; })
+            .attr('fill', function(d) { return color(d.CLASS); })
+            .attr('fill-opacity', o);
 
-        //console.log(logElevation(elevation[0]));
           // title
         g
             .append('text')
@@ -150,7 +216,7 @@ function buildChart(containerId) {
         var x1 = 40;
         var spacing1 = 27;
         var w1 = 100;
-        var h1 = 500;
+        var h1 = height;
 
         var legend1 = d3
                 .select(containerId)
@@ -183,7 +249,8 @@ function buildChart(containerId) {
                     return i * spacing1 + y1;
                     })
                   .style('fill', color)
-                  .style('stroke', color);
+                  .style('stroke', color)
+                  .attr('fill-opacity', o);
 
             g2.append('text')
                 .attr('x', x1 + 20)
@@ -192,14 +259,13 @@ function buildChart(containerId) {
                     })
                 .text(function(d) { return d; });
 
-
         //Legend 2
         var radius2 = 10;
         var y2 = 40;
         var x2 = 40;
-        var spacing2 = 27;
-        var w2 = 100;
-        var h2 = 500;
+        var spacing2 = 30;
+        var w2 = 160;
+        var h2 = height;
 
         var legend2 = d3
                 .select(containerId)
@@ -220,27 +286,26 @@ function buildChart(containerId) {
         var g2 = legend2
                 .append("g")
                 .selectAll("g")
-                .data(logElevation.domain())
+                .data(elevation)
                 .enter()
                 .append('g')
                 .attr('class', 'dots');
 
             g2.append('circle')
-                  .attr('r', logElevation)
+                  .attr('r', function(d){ return d.key;})
                   .attr('cx', x2)
                   .attr('cy', function(d, i){
                     return i * spacing2 + y2;
-                    });
+                    })
+                  .attr('fill-opacity', o);
 
             g2.append('text')
                 .attr('x', x2 + 20)
                 .attr('y', function(d, i){
                     return i * spacing2 + y2 + radius2/2;
                     })
-                .text(function(d) { return d; });
+                .text(function(d) { return d.value.range; });
         }
-
-  
 }
 
 buildChart('#states')
