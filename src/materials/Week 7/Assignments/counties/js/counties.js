@@ -2,37 +2,8 @@ function buildChart(containerId) {
 
     var years = ['2012', '2013', '2014', '2015', '2016'];
 
-    years.forEach(function(d, i){
 
-        var YEAR = years[i];
-
-        var width = 850;
-        var height = 500;
-        var margin = {
-            top: 50,
-            right: 50,
-            bottom: 50,
-            left: 50
-        };
-
-        // calculate dimensions without margins
-        var innerWidth = width - margin.left - margin.right;
-        var innerHeight = height - margin.top - margin.bottom;
-
-        // create svg element
-        var svg = d3
-            .select(containerId)
-            .append('svg')
-            .attr('height', height)
-            .attr('width', function(d, i){
-                return (i+1)*width + margin.right;
-        });
-
-        var g = svg
-            .append('g')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-            d3.csv('data/laucnty12.csv', function(error, cnty12) {
+    d3.csv('data/laucnty12.csv', function(error, cnty12) {
         if (error) {
             console.error('failed to read data');
             return;
@@ -75,11 +46,21 @@ function buildChart(containerId) {
                             }
                             //console.log('geojson', geojson);
 
-                            dm(cnty12, cnty13, cnty14, cnty15, cnty16, geojson);
-                            //console.log('data', data);
+                            cntys = dm1(cnty12, cnty13, cnty14, cnty15, cnty16);
+                            console.log('Counties', cntys);
 
-                            chloro(geojson);
-                           
+                            years.forEach(function(d, i){
+
+                                var YEAR = years[i];
+
+                                console.log('YEAR', YEAR);
+
+                                geojson2 = dm2(cntys, geojson, YEAR);
+                                console.log('geojson', geojson2);
+
+                                chloro(geojson2, YEAR);
+
+                            });
                         });
                     });
                 });
@@ -87,9 +68,8 @@ function buildChart(containerId) {
         });
     });
 
-    //function dm performs necessary data management steps for the data
-    function dm(cnty12, cnty13, cnty14, cnty15, cnty16, geojson, YEAR){
 
+    function dm1(cnty12, cnty13, cnty14, cnty15, cnty16){
         //Appends data together
         cntys = cnty12.concat(cnty13, cnty14, cnty15, cnty16);
 
@@ -98,25 +78,58 @@ function buildChart(containerId) {
             d.id = +d.StateCode.concat(d.CountyCode);
             d.pctUE = +d.Percent;
         });
-        console.log('counties', cntys);
+
+        return cntys;
+    }
+
+    function dm2(cntys, geojson, YEAR){
+        subset = cntys.filter(function(e){
+                    return e.Year == YEAR;
+                });
+
+        console.log('subset', subset);
 
         geojson.features.forEach(function(f) {
-            cntys.forEach(function(d){
-                if((f.id == d.id) & (d.year == YEAR)){
+            subset.forEach(function(d) {
+
+                if((f.id == d.id)){
                     unem = d.pctUE;
-                    year = d.year;
                     if (unem) {
                         f.properties.unem = unem;
-                        f.properties.year = year;
                     }
                 }
             });
         });
 
-        console.log('geojson', geojson);
+        return geojson;
     }
 
-    function chloro(geojson){
+    function chloro(geojson, YEAR){
+        
+        var width = 850;
+        var height = 500;
+        var margin = {
+            top: 50,
+            right: 50,
+            bottom: 50,
+            left: 50
+        };
+
+        // calculate dimensions without margins
+        var innerWidth = width - margin.left - margin.right;
+        var innerHeight = height - margin.top - margin.bottom;
+
+        // create svg element
+        var svg = d3
+            .select(containerId)
+            .append('svg')
+            .attr('height', height)
+            .attr('width', width);
+
+        var g = svg
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
 
         var Proj = d3
             .geoAlbersUsa()
@@ -129,7 +142,7 @@ function buildChart(containerId) {
         var colors = ["#f7fbff",  "#deebf7",  "#c6dbef",  "#9ecae1",  "#6baed6",  "#4292c6",  "#2171b5",  "#08519c",  "#08306b"];
 
         var colorize = d3.scaleThreshold()
-            .domain([2,3, 4, 5, 6, 7, 8, 9, 10])
+            .domain([2, 3, 4, 5, 6, 7, 8, 9, 10])
             .range(colors);
 
         g.selectAll("path")
@@ -165,13 +178,6 @@ function buildChart(containerId) {
             .style("font", "24px times");
 
     }
-
-
-        //console.log(years[i]);
-
-
-
-    });
 
 }
 
