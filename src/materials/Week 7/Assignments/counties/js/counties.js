@@ -105,7 +105,7 @@ function buildChart(containerId) {
     }
 
     function chloro(geojson, YEAR){
-        
+
         var width = 850;
         var height = 500;
         var margin = {
@@ -145,6 +145,11 @@ function buildChart(containerId) {
             .domain([2, 3, 4, 5, 6, 7, 8, 9, 10])
             .range(colors);
 
+
+        var x = d3.scaleLinear()
+            .domain([1, 10])
+            .rangeRound([600, 860]);
+
         g.selectAll("path")
           .data(geojson.features)
           .enter()
@@ -176,6 +181,83 @@ function buildChart(containerId) {
             .attr('dominant-baseline', 'baseline')
             .text(YEAR.concat(' Unemployement Rates'))
             .style("font", "24px times");
+
+        if(YEAR == "2014"){
+            g.selectAll("rect")
+              .data(colorize.range().map(function(d) {
+                  d = colorize.invertExtent(d);
+                  if (d[0] == null) d[0] = x.domain()[0];
+                  if (d[1] == null) d[1] = x.domain()[1];
+                  return d;
+                }))
+              .enter().append("rect")
+                .attr("height", 8)
+                .attr("x", function(d) { return x(d[0]); })
+                .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+                .attr("fill", function(d) { return colorize(d[0]); });
+
+            g.append("text")
+                .attr("class", "caption")
+                .attr("x", x.range()[0])
+                .attr("y", -6)
+                .attr("fill", "#000")
+                .attr("text-anchor", "start")
+                .attr("font-weight", "bold")
+                .text("Unemployment rate");
+
+            g.call(d3.axisBottom(x)
+                .tickSize(13)
+                .tickFormat(function(x, i) { return i ? x : x + "%"; })
+                .tickValues(colorize.domain()))
+              .select(".domain")
+                .remove();
+
+            // var y1 = 40;
+            // var x1 = 40;
+            // var spacing1 = 27;
+            // var w1 = 100;
+            // var h1 = height;
+
+            // var legend1 = d3
+            //         .select(containerId)
+            //         .append('svg')
+            //         .attr('height', h1)
+            //         .attr('width', w1)
+            //         .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
+
+            // legend1.append('text')
+            //         .attr('class', 'title')
+            //         .attr('x', w1 / 2)
+            //         .attr('y', 20)
+            //         .attr('text-anchor', 'middle')
+            //         .attr('dominant-baseline', 'baseline')
+            //         .text('Class')
+            //         .style("font", "16px times");
+
+            // var g2 = legend1
+            //         .append("g")
+            //         .selectAll("g")
+            //         .data(color.domain())
+            //         .enter()
+            //         .append('g')
+            //         .attr('class', 'dots');
+
+            //     g2.append('rect')
+            //           .attr('x', x1)
+            //           .attr('y', function(d, i){
+            //             return i * spacing1 + y1;
+            //             })
+            //           .style('fill', color)
+            //           .style('stroke', color)
+            //           .attr('fill-opacity', o);
+
+            //     g2.append('text')
+            //         .attr('x', x1 + 20)
+            //         .attr('y', function(d, i){
+            //             return i * spacing1 + y1 + radius1/2;
+            //             })
+            //         .text(function(d) { return d; });
+            }
 
     }
 
