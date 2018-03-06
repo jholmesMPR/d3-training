@@ -356,7 +356,7 @@ function buildBar(containerId){
         startYear.sort(function(x, y){
             return d3.ascending(x.key, y.key);
         });
-        
+
         return startYear;
     }
 
@@ -395,42 +395,75 @@ function buildBar(containerId){
             .append('g')
             .attr('class', 'years');
 
+        var x = d3
+            .scaleBand()
+            .domain(
+                data.map(function(d) {
+                    return d.key;
+                })
+            )
+            .range([0, innerWidth])
+            .padding(0.1);
 
-        // var x = d3
-        //     .scaleBand()
-        //     .domain(
-        //         data.map(function(d) {
-        //             return d.State;
-        //         })
-        //     )
-        //     .range([0, innerWidth])
-        //     .padding(0.1);
-
-        // var y = d3
-        //     .scaleLinear()
-        //     .domain([
-        //         0,
-        //         d3.max(data, function(d) {
-        //             return d.Emissions;
-        //         })
-        //     ])
-        //     .range([innerHeight, 0]);
+        var y = d3
+            .scaleLinear()
+            .domain([
+                0,
+                d3.max(data, function(d) {
+                    return d.value;
+                })
+            ])
+            .range([innerHeight, 0]);
 
 
-        // var xAxis = d3.axisBottom(x);
+        var xAxis = d3.axisBottom(x);
 
-        // g
-        //     .append('g')
-        //     .attr('class', 'x-axis')
-        //     .attr('transform', 'translate(0,' + innerHeight + ')')
-        //     .call(xAxis);
+        g
+            .append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', 'translate(0,' + innerHeight + ')')
+            .call(xAxis);
 
-        // var yAxis = d3.axisLeft(y).ticks(12);
+        var yAxis = d3.axisLeft(y).ticks(12);
 
-        // g
-        //     .append('g')
-        //     .attr('class', 'y-axis')
-        //     .call(yAxis);
+        g
+            .append('g')
+            .attr('class', 'y-axis')
+            .call(yAxis);
+
+          // X-axis Label
+        g
+            .append('text')
+            .attr('class', 'x-axis-label')
+            .attr('x', innerWidth / 2)
+            .attr('y', innerHeight + 30)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'hanging')
+            .text('Start Year')
+            .style("font", "18px times");
+
+        //Y-axis Label
+        g
+            .append('text')
+            .attr('class', 'y-axis-label')
+            .attr('x', 0)
+            .attr('y', innerHeight / 2 - 20)
+            .attr('transform', 'rotate(-90,-30,' + innerHeight / 2  + ')')
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .text('Count')
+            .style("font", "18px times");
+
+        // title
+        g
+            .append('text')
+            .attr('class', 'title')
+            .attr('x', innerWidth / 2)
+            .attr('y', -20)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'baseline')
+            .style("font", "24px times")
+            .text('Mathematica Employees by Start Year');
 
     }
 
