@@ -47,52 +47,85 @@ function buildGraph(containerId) {
 
         // set the nodes
         var nodes = graph.nodes
-         .filter(function(d) { return d.division == initialDivision |
-                                      d.id == "Paul Decker"});
+         .filter(function(d) { return (d.division == initialDivision |
+                                      d.id == "Paul Decker") //have to pull in Paul from other divisions because otherwise node is missing
+                                      
+                                  });
         // links between nodes}
         var links = graph.links
-         .filter(function(d) { return d.division == initialDivision |
-                                      d.id == "Paul Decker"});
+         .filter(function(d) { return (d.division == initialDivision |
+                                      d.id == "Paul Decker")
+                                      & d.start_year <= 2007
+                                  });
 
-        var color = d3.scaleOrdinal(d3.schemeCategory20);
+        // var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+
+        // var color = d3.scaleOrdinal() // D3 Version 4
+        //               .domain(['A', 'B', 'C', 'D', 'E', 'O'])
+        //               .range([d3.rgb(247,165,145), d3.rgb(233,28,44) , d3.rgb(247,148,30), 
+        //                       d3.rgb(240,89,52), d3.rgb(250,171,51), d3.rgb(252,208,141)]);
+
+
+        var color = d3.scaleOrdinal() // D3 Version 4
+                      .domain(['A', 'B', 'C', 'D', 'E', 'O'])
+                      .range(['#1E0576', '#771493' , '#e70033', 
+                              '#0063be', '#009a3d', '#f7941e']);
+
 
         nodes.forEach(function(d){
             d.color = color(d.level);
         });
 
-        // var cl = nodes.map(
-        //     function(d){return {
-        //         level: d.level,
-        //         color: d.color};
-        //     });
+        var radius = 6;
+        var y = 40;
+        var x = 40;
+        var spacing = 27;
+        var w = 100;
+        var h = height;
 
-        // var colorLegend = d3.nest()
-        //   .key(function(d) { return {
-        //     level:d.level,
-        //     color: d.color}; })
-        //   .entries(cl);
-        // var colorLegend = d3.nest()
-        //   .key(function(d) { return d.level; })
-        //   //.rollup(function(v) { return v.level; })
-        //   .entries(cl);
+        var legend = d3
+                .select(containerId)
+                .append('svg')
+                .attr('height', h)
+                .attr('width', w)
+                .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
 
-        //var colorLegend = d3.map(nodes, function(d) { return d.level; });
-        //console.log('keys', keys);
-        // var colorLegend =  d3
-        //    .map(nodes, 
-        //     function(d){return {
-        //         level: d.level
-        //         color: d.color};
-        //     })
-        //   .keys();
+        legend.append('text')
+                .attr('class', 'title')
+                .attr('x', w / 2)
+                .attr('y', 20)
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'baseline')
+                .text('Class')
+                .style("font", "16px times");
 
-        
-        // colorLegend.sort(function(x, y){
-        //     return d3.ascending(x.level, y.level);
-        // })
+        var g2 = legend
+                .append("g")
+                .selectAll("g")
+                .data(color.domain())
+                .enter()
+                .append('g')
+                .attr('class', 'dots');
 
-        //console.log('colorLegend', colorLegend); 
+            g2.append('circle')
+                  .attr('r', radius)
+                  .attr('cx', x)
+                  .attr('cy', function(d, i){
+                    return i * spacing + y;
+                    })
+                  .style('fill', color)
+                  .style('stroke', color)
+                  .attr('fill-opacity', 1);
 
+            g2.append('text')
+                .attr('x', x + 20)
+                .attr('y', function(d, i){
+                    return i * spacing + y + radius/2;
+                    })
+                .text(function(d) { return d; });
+
+      
 
         // add the curved links to our graphic
         var link = svg.selectAll(".link")
@@ -202,10 +235,14 @@ function buildGraph(containerId) {
             linkedByIndex[d.source.index + "," + d.target.index] = 1;
         });
 
+        console.log('linkedByIndex', linkedByIndex);
+
         // check the dictionary to see if nodes are linked
         function isConnected(a, b) {
             return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
         }
+
+
 
         // fade nodes on hover
         function mouseOver(opacity) {
@@ -248,60 +285,6 @@ function buildGraph(containerId) {
             link.style("stroke", "#ddd");
         }
 
-        //Legend
-        var radius1 = 6;
-        var y1 = 40;
-        var x1 = 40;
-        var spacing1 = 27;
-        var w1 = 100;
-        var h1 = height;
-
-        var legend = d3
-                .select(containerId)
-                .append('svg')
-                .attr('height', h1)
-                .attr('width', w1)
-                .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
-
-        legend.append('text')
-                .attr('class', 'title')
-                .attr('x', w1 / 2)
-                .attr('y', 20)
-                .attr('text-anchor', 'middle')
-                .attr('dominant-baseline', 'baseline')
-                .text('Level')
-                .style("font", "16px Arial");
-
-        // var g2 = legend
-        //         .append("g")
-        //         .selectAll("g")
-        //         .data(colorLegend)
-        //         .enter()
-        //         .append('g')
-        //         .attr('class', 'dots');
-
-        //     g2.append('circle')
-        //           .attr('r', radius1)
-        //           .attr('cx', x1)
-        //           .attr('cy', function(d, i){
-        //             return i * spacing1 + y1;
-        //             })
-        //           .style('fill', function(d){
-        //             return d.value.color;
-        //           })
-        //           .style('stroke',  function(d){
-        //             return d.value.color;
-        //           })
-        //           .attr('fill-opacity', 1);
-
-        //     g2.append('text')
-        //         .attr('x', x1 + 20)
-        //         .attr('y', function(d, i){
-        //             return i * spacing1 + y1 + radius1/2;
-        //             })
-        //         .text(function(d) { 
-        //             return d.key; 
-        //         });
     }
 
 
@@ -361,8 +344,8 @@ function buildBar(containerId){
     }
 
     function drawBar(data){
-        var width = 1500;
-        var height = 960;
+        var width = 1200;
+        var height = 450;
 
         var margin = {
                 top: 50,
@@ -440,7 +423,7 @@ function buildBar(containerId){
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'hanging')
             .text('Start Year')
-            .style("font", "18px times");
+            .style("font", "18px Arial");
 
         //Y-axis Label
         g
@@ -452,7 +435,7 @@ function buildBar(containerId){
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
             .text('Count')
-            .style("font", "18px times");
+            .style("font", "18px Arial");
 
         // title
         g
@@ -462,14 +445,33 @@ function buildBar(containerId){
             .attr('y', -20)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'baseline')
-            .style("font", "24px times")
+            .style("font", "24px Arial")
             .text('Mathematica Employees by Start Year');
 
-    }
+        g
+            .selectAll('.bar')
+            .data(startYear)
+            .enter()
+            .append('rect')
+            .attr('class', 'bar')
+            .attr('x', function(d) {
+                return x(d.key);
+            })
+            .attr('y', function(d) {
+                return y(d.value);
+            })
+            .attr('width', x.bandwidth())
+            .attr('height', function(d) {
+                return innerHeight - y(d.value);
+            })
+            .attr('fill', d3.rgb(233, 28, 44))
+            .attr('stroke', 'none');
+
+        }
 
 
 }
 
-buildGraph('#network');
-
 buildBar('#bar');
+
+buildGraph('#network');
