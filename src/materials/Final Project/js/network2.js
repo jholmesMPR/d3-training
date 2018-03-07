@@ -58,24 +58,11 @@ function buildGraph(containerId) {
                                       & d.start_year <= 2007
                                   });
 
-        // var color = d3.scaleOrdinal(d3.schemeCategory20);
-
-
-        // var color = d3.scaleOrdinal() // D3 Version 4
-        //               .domain(['A', 'B', 'C', 'D', 'E', 'O'])
-        //               .range([d3.rgb(247,165,145), d3.rgb(233,28,44) , d3.rgb(247,148,30), 
-        //                       d3.rgb(240,89,52), d3.rgb(250,171,51), d3.rgb(252,208,141)]);
-
 
         var color = d3.scaleOrdinal() // D3 Version 4
-                      .domain(['A', 'B', 'C', 'D', 'E', 'O'])
-                      .range(['#1E0576', '#771493' , '#e70033', 
-                              '#0063be', '#009a3d', '#f7941e']);
+                    .domain(['A', 'B', 'C', 'D', 'E', 'O'])
+                    .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
 
-
-        nodes.forEach(function(d){
-            d.color = color(d.level);
-        });
 
         var radius = 6;
         var y = 40;
@@ -146,9 +133,9 @@ function buildGraph(containerId) {
         // a circle to represent the node
         node.append("circle")
             .attr("class", "node")
-            .attr("r", 4)
+            .attr("r", 5)
             .attr("fill", function(d) {
-                return d.color;
+                return color(d.level);
             })
             .on("mouseover", mouseOver(.2))
             .on("mouseout", mouseOut);
@@ -242,6 +229,31 @@ function buildGraph(containerId) {
             return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
         }
 
+       //console.log(numWeights);
+
+
+        // var numLinks = links.forEach(function(d) {      
+        //             links.filter(function(l) {
+        //                    return l.source.index == d.index || l.target.index == d.index
+        //                }).()
+        //             });
+        // console.log(numLinks)
+        // // links.forEach(function(d){
+        //         console.log(d.source.index);
+        // });
+
+        // nodes.forEach(function(d, o){
+        //     console.log(isConnected(d, o));
+        // });
+
+        // function colorNodes() {
+        //     return function(d){
+        //         node.attr('fill', function(o){
+        //             c = isConnected(d, o) ? 'red' : 'white';
+        //             return c;
+        //         });
+        //     };
+        // }
 
 
         // fade nodes on hover
@@ -256,6 +268,7 @@ function buildGraph(containerId) {
                 });
                 node.style("fill-opacity", function(o) {
                     thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    //console.log(isConnected(d, o));
                     return thisOpacity;
                 });
 
@@ -335,6 +348,14 @@ function buildBar(containerId){
         startYear.forEach(function(d){
             d.key = +d.key;
         })
+
+        //Years missing because there's no one left :(
+        startYear.push({key:1979, value:0},
+                       {key:1981, value:0},
+                       {key:1983, value:0},
+                       {key:1985, value:0},
+                       {key:1986, value:0},
+                       {key:1987, value:0})
 
         startYear.sort(function(x, y){
             return d3.ascending(x.key, y.key);
