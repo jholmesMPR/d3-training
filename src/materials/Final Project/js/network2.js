@@ -1,28 +1,37 @@
+function openGraph(chartId) {
+    var i;
+    var x = document.getElementsByClassName("chart");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none"; 
+    }
+    document.getElementById(chartId).style.display = "block"; 
+}
+
 function buildGraph(containerId) {
-    var width = 1350;
-    var height = 1200;
-    var radius = 6;
+    // var width = 1350;
+    // var height = 1200;
+    // var radius = 6;
 
-    var margin = {
-            top: 75,
-            right: 50,
-            bottom: 50,
-            left: 75};
+    // var margin = {
+    //         top: 75,
+    //         right: 50,
+    //         bottom: 50,
+    //         left: 75};
 
-    // calculate dimensions without margins
-    var innerWidth = width - margin.left - margin.right;
-    var innerHeight = height - margin.top - margin.bottom;
+    // // calculate dimensions without margins
+    // var innerWidth = width - margin.left - margin.right;
+    // var innerHeight = height - margin.top - margin.bottom;
 
-    var svg = d3
-        .select(containerId)
-        .append('svg')
-        .attr('height', height)
-        .attr('width', width)
-        .attr("align","center");
+    // var svg = d3
+    //     .select(containerId)
+    //     .append('svg')
+    //     .attr('height', height)
+    //     .attr('width', width)
+    //     .attr("align","center");
 
-    var g = svg
-        .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    // var g = svg
+    //     .append('g')
+    //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
     d3.json("data/mpr.json", function(error, graph) {
         if (error) {
@@ -34,23 +43,23 @@ function buildGraph(containerId) {
 
     function changeIt(){
     //get rid of everything and re-draw
-        d3.selectAll(".node").remove()
-        d3.selectAll(".labels").remove()
-        d3.selectAll(".link").remove()
-      //  d3.selectAll(".legend-title").remove()
-      //  d3.selectAll(".dots").remove()
-      //  d3.selectAll("svg text.legend-text").remove()
+        // d3.selectAll(".node").remove();
+        // d3.selectAll(".labels").remove();
+        // d3.selectAll(".link").remove();
+        d3.selectAll("#network > svg").remove();
+        //#network > svg:nth-child(4)
 
-        var form = document.getElementById("dimensions")
+        var form = document.getElementById("dimensions");
         var form_val;
         for(var i=0; i<form.length; i++){
             if(form[i].checked){
             form_val = form[i].id;}
             }
-        data = filterData(graph, form_val)
+        data = filterData(graph, form_val);
         console.log('Value', form_val);
 
-        drawNetwork(data, form_val);    
+        drawNetwork(data, form_val);   
+        drawLegend(); 
     }
     
     var dataDim = d3.select("#dimensions");
@@ -61,8 +70,7 @@ function buildGraph(containerId) {
     data = filterData(graph, start);
     console.log('filter data', data);
     drawNetwork(data, start);
-     drawLegend();
-
+    drawLegend();
 
     });
 
@@ -95,14 +103,92 @@ function buildGraph(containerId) {
           return graph_new;
         }
         
+    function drawLegend(){
+        var color = d3.scaleOrdinal() // D3 Version 4
+                    .domain(['A', 'B', 'C', 'D', 'E', 'O'])
+                    .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
 
+        var radius = 6;
+        var height = 1200;
+        var y = 40;
+        var x = 40;
+        var spacing = 27;
+        var w = 100;
+        var h = height;
+
+        var legend = d3
+                .select(containerId)
+                .append('svg')
+                .attr('height', h)
+                .attr('width', w)
+                .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
+
+        legend.append('text')
+                .attr('class', 'legend-title')
+                .attr('x', w / 2)
+                .attr('y', 20)
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'baseline')
+                .text('Level')
+                .style("font", "16px times");
+
+        var g2 = legend
+                .append("g")
+                .selectAll("g")
+                .data(color.domain())
+                .enter()
+                .append('g')
+                .attr('class', 'dots');
+
+            g2.append('circle')
+              //    .attr('class', 'legend-nodes')
+                  .attr('r', radius)
+                  .attr('cx', x)
+                  .attr('cy', function(d, i){
+                    return i * spacing + y;
+                    })
+                  .style('fill', color)
+                  .style('stroke', color)
+                  .attr('fill-opacity', 1);
+
+            g2.append('text')
+             //   .attr('class', 'legend-text')
+                .attr('x', x + 20)
+                .attr('y', function(d, i){
+                    return i * spacing + y + radius/2;
+                    })
+                .text(function(d) { return d; });
+    }    
 
     function drawNetwork(graph, division){
+        var width = 1350;
+        var height = 1200;
+        var radius = 6;
+
+        var margin = {
+                top: 75,
+                right: 50,
+                bottom: 50,
+                left: 75};
+
+        // calculate dimensions without margins
+        var innerWidth = width - margin.left - margin.right;
+        var innerHeight = height - margin.top - margin.bottom;
+
+        var svg = d3
+            .select(containerId)
+            .append('svg')
+            .attr('height', height)
+            .attr('width', width)
+            .attr("align","center");
+
+        var g = svg
+            .append('g')
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
        var color = d3.scaleOrdinal() // D3 Version 4
                 .domain(['A', 'B', 'C', 'D', 'E', 'O'])
                 .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
-
-
 
        var simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function(d) { return d.id; }))
@@ -111,20 +197,9 @@ function buildGraph(containerId) {
         .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2));
 
         // set the nodes
-        var nodes = graph.nodes
-         // .filter(function(d) { return (d.division == initialDivision |
-         //                              d.id == "Paul Decker") //have to pull in Paul from other divisions because otherwise node is missing
-                                      
-         //                          });
-         ;
+        var nodes = graph.nodes;
         // links between nodes
-        var links = graph.links
-         // .filter(function(d) { return (d.division == initialDivision |
-         //                              d.id == "Paul Decker")
-         //                             // & d.start_year <= 2007
-         //                          });
-         ;
-
+        var links = graph.links;
 
         // add the curved links to our graphic
         var link = svg.selectAll(".link")
@@ -273,6 +348,7 @@ function buildGraph(containerId) {
                     return o.source === d || o.target === d ? o.source.colour : "#ddd";
                 });
             };
+
         }
 
         function mouseOut() {
@@ -284,63 +360,6 @@ function buildGraph(containerId) {
             link.style("stroke", "#ddd");
         }
 
-    }
-
-    function drawLegend(){
-        var color = d3.scaleOrdinal() // D3 Version 4
-                    .domain(['A', 'B', 'C', 'D', 'E', 'O'])
-                    .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
-
-
-        var radius = 6;
-        var y = 40;
-        var x = 40;
-        var spacing = 27;
-        var w = 100;
-        var h = height;
-
-        var legend = d3
-                .select(containerId)
-                .append('svg')
-                .attr('height', h)
-                .attr('width', w)
-                .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
-
-        legend.append('text')
-                .attr('class', 'legend-title')
-                .attr('x', w / 2)
-                .attr('y', 20)
-                .attr('text-anchor', 'middle')
-                .attr('dominant-baseline', 'baseline')
-                .text('Level')
-                .style("font", "16px times");
-
-        var g2 = legend
-                .append("g")
-                .selectAll("g")
-                .data(color.domain())
-                .enter()
-                .append('g')
-                .attr('class', 'dots');
-
-            g2.append('circle')
-              //    .attr('class', 'legend-nodes')
-                  .attr('r', radius)
-                  .attr('cx', x)
-                  .attr('cy', function(d, i){
-                    return i * spacing + y;
-                    })
-                  .style('fill', color)
-                  .style('stroke', color)
-                  .attr('fill-opacity', 1);
-
-            g2.append('text')
-             //   .attr('class', 'legend-text')
-                .attr('x', x + 20)
-                .attr('y', function(d, i){
-                    return i * spacing + y + radius/2;
-                    })
-                .text(function(d) { return d; });
     }
 
 }
@@ -433,7 +452,7 @@ function buildBar(containerId){
     }
 
     function drawBar(data){
-        var width = 1200;
+        var width = 1350;
         var height = 450;
 
         var margin = {
