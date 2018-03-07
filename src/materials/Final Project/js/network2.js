@@ -1,10 +1,10 @@
 function buildGraph(containerId) {
     var width = 1350;
-    var height = 960;
+    var height = 1200;
     var radius = 6;
 
     var margin = {
-            top: 50,
+            top: 75,
             right: 50,
             bottom: 50,
             left: 75};
@@ -31,32 +31,93 @@ function buildGraph(containerId) {
           }
           console.log('raw_graph', graph);
 
-        initialDivision = "Health";
-        drawNetwork(graph, initialDivision);
-        //additional();
+
+    function changeIt(){
+    //get rid of everything and re-draw
+        d3.selectAll(".node").remove()
+        d3.selectAll(".labels").remove()
+        d3.selectAll(".link").remove()
+        // d3.selectAll(".legend-title").remove()
+        // d3.selectAll(".legend-nodes").remove()
+        // d3.selectAll(".legend-text").remove()
+
+        var form = document.getElementById("dimensions")
+        var form_val;
+        for(var i=0; i<form.length; i++){
+            if(form[i].checked){
+            form_val = form[i].id;}
+            }
+        data = filterData(graph, form_val)
+        console.log('Value', form_val);
+
+        drawNetwork(data, form_val);    
+    }
+    
+    var dataDim = d3.select("#dimensions");
+
+    dataDim.on("change", changeIt);
+  
+    start = 'Health';
+    data = filterData(graph, start);
+    console.log('filter data', data);
+    drawNetwork(data, start);
+
 
     });
 
-    function drawNetwork(graph, initialDivision){
+    function filterData(graph, division){
+        if(division == 'International'){
+            var nodes = graph.nodes
+            .filter(function(d){
+                return d.id == "Jeremy Page" | d.id == "Mary Grider" | d.division == division | d.id == "Paul Decker"
+                });
+            console.log('nodes', nodes);
+
+            var links = graph.links
+            .filter(function(d){
+
+               return d.id == "Jeremy Page" | d.id == "Mary Grider" | d.division == division | d.id == "Paul Decker" 
+                });
+
+        } else {
+            var nodes = graph.nodes
+             .filter(function(d){
+                return  d.division == division | d.id == "Paul Decker"});
+            
+            var links = graph.links
+             .filter(function(d){
+                return d.division == division | d.id == "Paul Decker"});
+
+        }   
+
+        var graph_new = {'nodes': nodes, 'links':links}
+          return graph_new;
+        }
+        
+
+
+    function drawNetwork(graph, division){
    
        var simulation = d3.forceSimulation()
         .force("link", d3.forceLink().id(function(d) { return d.id; }))
         .force("charge", d3.forceManyBody().strength(-15))
-        .force("collide", d3.forceCollide().radius(15))
+        .force("collide", d3.forceCollide().radius(17))
         .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2));
 
         // set the nodes
         var nodes = graph.nodes
-         .filter(function(d) { return (d.division == initialDivision |
-                                      d.id == "Paul Decker") //have to pull in Paul from other divisions because otherwise node is missing
+         // .filter(function(d) { return (d.division == initialDivision |
+         //                              d.id == "Paul Decker") //have to pull in Paul from other divisions because otherwise node is missing
                                       
-                                  });
-        // links between nodes}
+         //                          });
+         ;
+        // links between nodes
         var links = graph.links
-         .filter(function(d) { return (d.division == initialDivision |
-                                      d.id == "Paul Decker")
-                                      & d.start_year <= 2007
-                                  });
+         // .filter(function(d) { return (d.division == initialDivision |
+         //                              d.id == "Paul Decker")
+         //                             // & d.start_year <= 2007
+         //                          });
+         ;
 
 
         var color = d3.scaleOrdinal() // D3 Version 4
@@ -79,12 +140,12 @@ function buildGraph(containerId) {
                 .attr('transform', 'translate(' + 5 + ',' + 5 + ')');
 
         legend.append('text')
-                .attr('class', 'title')
+                .attr('class', 'legend-title')
                 .attr('x', w / 2)
                 .attr('y', 20)
                 .attr('text-anchor', 'middle')
                 .attr('dominant-baseline', 'baseline')
-                .text('Class')
+                .text('Level')
                 .style("font", "16px times");
 
         var g2 = legend
@@ -96,6 +157,7 @@ function buildGraph(containerId) {
                 .attr('class', 'dots');
 
             g2.append('circle')
+                //  .attr('class', 'legend-nodes')
                   .attr('r', radius)
                   .attr('cx', x)
                   .attr('cy', function(d, i){
@@ -106,6 +168,7 @@ function buildGraph(containerId) {
                   .attr('fill-opacity', 1);
 
             g2.append('text')
+             //   .attr('class', legend-text')
                 .attr('x', x + 20)
                 .attr('y', function(d, i){
                     return i * spacing + y + radius/2;
@@ -149,7 +212,7 @@ function buildGraph(containerId) {
                 return d.id;
             })
             .style("fill", "#555")
-            .attr("transform", "rotate(325)")
+           // .attr("transform", "rotate(325)")
             .style("fill-opacity", 0)
             .style("font-family", "Arial")
             .style("font-size", 10);
@@ -210,7 +273,7 @@ function buildGraph(containerId) {
             };
 
               d.x = Math.max(radius, Math.min(innerWidth - radius, d.x)); 
-              d.y = Math.max(radius, Math.min(innerWidth - radius, d.y)); 
+              d.y = Math.max(radius, Math.min(innerHeight - radius, d.y)); 
 
             return "translate(" + d.x + "," + d.y + ")";
         }
@@ -228,32 +291,6 @@ function buildGraph(containerId) {
         function isConnected(a, b) {
             return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
         }
-
-       //console.log(numWeights);
-
-
-        // var numLinks = links.forEach(function(d) {      
-        //             links.filter(function(l) {
-        //                    return l.source.index == d.index || l.target.index == d.index
-        //                }).()
-        //             });
-        // console.log(numLinks)
-        // // links.forEach(function(d){
-        //         console.log(d.source.index);
-        // });
-
-        // nodes.forEach(function(d, o){
-        //     console.log(isConnected(d, o));
-        // });
-
-        // function colorNodes() {
-        //     return function(d){
-        //         node.attr('fill', function(o){
-        //             c = isConnected(d, o) ? 'red' : 'white';
-        //             return c;
-        //         });
-        //     };
-        // }
 
 
         // fade nodes on hover
@@ -334,6 +371,12 @@ function buildBar(containerId){
 
         startYear = dm(data);
         console.log('summarized data', startYear);
+        startYear2 = dm2(data);
+        console.log('summarized data2', startYear2);
+
+        position = dmPosition(data);
+        console.log('Position', position);
+        
         drawBar(startYear);
     
     });
@@ -362,6 +405,46 @@ function buildBar(containerId){
         });
 
         return startYear;
+    }
+
+    function dm2(data){
+        //Add variable to summarize
+        var startYear = d3.nest()
+            .key(function(d) { return d.title; })
+            .key(function(d) { return d.start_year; })
+            .rollup(function(v) { return v.length; })
+            .entries(data);
+
+        // startYear.forEach(function(d){
+        //    // d.key = +d.key;
+        // })
+
+        //Years missing because there's no one left :(
+        // startYear.push({key:1979, value:0},
+        //                {key:1981, value:0},
+        //                {key:1983, value:0},
+        //                {key:1985, value:0},
+        //                {key:1986, value:0},
+        //                {key:1987, value:0})
+
+        // startYear.sort(function(x, y){
+        //     return d3.ascending(x.key, y.key);
+        // });
+
+        return startYear;
+    }
+
+    function dmPosition(data){
+        var position = d3.nest()
+          .key(function(d) { return d.title; })
+          .rollup(function(v) { return v.length; })
+          .entries(data);
+
+        position.sort(function(x, y){
+            return d3.descending(x.value, y.value);
+        });
+
+        return position;
     }
 
     function drawBar(data){
@@ -459,19 +542,19 @@ function buildBar(containerId){
             .style("font", "18px Arial");
 
         // title
-        g
-            .append('text')
-            .attr('class', 'title')
-            .attr('x', innerWidth / 2)
-            .attr('y', -20)
-            .attr('text-anchor', 'middle')
-            .attr('dominant-baseline', 'baseline')
-            .style("font", "24px Arial")
-            .text('Mathematica Employees by Start Year');
+        // g
+        //     .append('text')
+        //     .attr('class', 'title')
+        //     .attr('x', innerWidth / 2)
+        //     .attr('y', -20)
+        //     .attr('text-anchor', 'middle')
+        //     .attr('dominant-baseline', 'baseline')
+        //     .style("font", "24px Arial")
+        //     .text('Mathematica Employees by Start Year');
 
         g
             .selectAll('.bar')
-            .data(startYear)
+            .data(data)
             .enter()
             .append('rect')
             .attr('class', 'bar')
