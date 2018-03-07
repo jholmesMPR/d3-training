@@ -1,16 +1,54 @@
-
-
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Mathematica Network</title>
-    	<link rel="stylesheet" href="./css/styles.css" />
-		<meta charset="utf-8"/>
+		<title>People of MPR</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="./css/styles.css" />
 	</head>
 	<body>
-  		<div id="network"></div>
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <script src="./js/network.js"></script>
+		<div class="container">
+
+			<header>
+			   <h1>Data Driven Humans of Mathematica</h1>
+			</header>
+
+
+			<div class="w3-bar w3-black">
+			  <button class = "w3-bar-item w3-button" onclick = "openGraph('bar')">Bar</button>
+			  <button class = "w3-bar-item w3-button" onclick = "openGraph('network')">Network</button>
+			  <button class = "w3-bar-item w3-button" onclick = "openGraph('bar2')">Bar2</button>
+			</div>
+
+			<div class="w3-container">
+				<div id = "bar" class = 'chart'>
+
+					<p>Mathematica Policy Research, founded in 1968, still retains some of (close to) its first employees. It has grown from a staff of approximately 10 - 20 employees in the mid-70s to over 1000 in the recent decades. The graph below shows there is a large range in year of employment, with some employees celebrating over 40 years of employments and others just beginning their careers with MPR. Although the graph doesn't show overall growth as these are just start dates of existing employees, rather than overall tenures, it still appears to follow economic patterns, with decreases following recession years in 2002 and 2009.</p> <br/>
+
+					<p>The concentration of start dates in the later half of the graph also help to explain a frequently observed trend in the humans of MPR: babies!</p>
+
+				</div>
+
+				<div id = "network" class = 'chart' style="display:none">
+					<h1>Network of MPR Divisions</h1>
+					<form id="dimensions">
+					  <input type = 'radio' id = "Health" name = "mode" checked>Health</input>
+					  <input type = 'radio' id = "Human Services" name = "mode">Human Services</input>
+					  <input type = 'radio' id = "International" name = "mode">International</input>
+					  <input type = 'radio' id = "Admin" name = "mode">Admin</input>
+					</form>
+				</div>
+
+				<div id = 'bar2' class = 'chart' style="display:none">
+					<h2> Title </h2>
+				</div>
+			</div>
+
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+ 		<script src="./js/network2.js"></script>
+
+ 		</div>
 	</body>
+
+	<footer></footer>
 
 </html>
