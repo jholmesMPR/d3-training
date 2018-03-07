@@ -1,4 +1,86 @@
+div.container {
+    width: 100%;
+    /*border: 1px solid gray;*/
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30;
+}
+
+header, footer {
+    padding: 1em;
+    color: white;
+    background-color: #f7941e;
+    clear: left;
+    text-align: center;
+}
+
+header {
+  height: 100px;
+  font-size: 40;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+footer {
+  background-color: #faab33;
+  /*height: 35px;*/
+}
+
 body {
     font-size: 12px;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+h1 {
+	font-family: 'Arial';
+	text-align: center;
+}
+
+p {
+  line-height: 1.5; 
+  font-family: Helvetica;
+  text-align: justify;
+  margin: 0;
+  font-size: 14px;
+/*  width: 350px;*/
+}
+
+.link {
+  fill: none;
+  stroke: #ddd;
+  stroke-width: 1px;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+
+/*text {
+	font-size: 8;
+}*/
+
+text {
+  font-family: 'Arial';
+  text-align: center;
+}
+
+.title {
+  font-family: 'Arial';
+  text-align: center;
+}
+
+
+.w3-bar{width:100%;overflow:hidden}.w3-center .w3-bar{display:inline-block;width:auto}
+.w3-bar .w3-bar-item{padding:8px 16px;float:left;width:auto;border:none;display:block;outline:0}
+.w3-bar .w3-dropdown-hover,.w3-bar .w3-dropdown-click{position:static;float:left}
+.w3-bar .w3-button{white-space:normal}
+.w3-bar:before,.w3-bar:after{content:"";display:table;clear:both}
+.w3-bar-item{width:100%;display:block;padding:8px 16px;text-align:left;border:none;white-space:normal;float:none;outline:0}
+.w3-bar-item{text-align:center}.w3-block{display:block;width:100%}
+.w3-button{width:100%}
+.w3-button:hover{color:#fff!important;background-color:#f05934!important}
+.w3-button{border:none;display:inline-block;padding:8px 16px;vertical-align:middle;overflow:hidden;text-decoration:none;color:inherit;background-color:inherit;text-align:center;cursor:pointer;white-space:nowrap}
+.w3-button{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none} 
+.w3-button:disabled{cursor:not-allowed;opacity:0.3}
+.w3-button{width:100%;text-align:left;padding:8px 16px}
+.w3-black,.w3-hover-black:hover{color:#fff!important;background-color:#faab33!important}
