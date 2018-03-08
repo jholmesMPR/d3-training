@@ -8,6 +8,7 @@ function openGraph(chartId) {
 }
 
 function buildGraph(containerId) {
+
     // var width = 1350;
     // var height = 1200;
     // var radius = 6;
@@ -47,30 +48,30 @@ function buildGraph(containerId) {
         // d3.selectAll(".labels").remove();
         // d3.selectAll(".link").remove();
         d3.selectAll("#network > svg").remove();
-        //#network > svg:nth-child(4)
 
         var form = document.getElementById("dimensions");
         var form_val;
-        for(var i=0; i<form.length; i++){
+        for(var i = 0; i < form.length; i++){
             if(form[i].checked){
             form_val = form[i].id;}
             }
         data = filterData(graph, form_val);
-        console.log('Value', form_val);
+        //console.log('Value', form_val);
 
         drawNetwork(data, form_val);   
-        drawLegend(); 
+        drawLegend(form_val); 
     }
-    
+
     var dataDim = d3.select("#dimensions");
 
     dataDim.on("change", changeIt);
   
-    start = 'Health';
-    data = filterData(graph, start);
-    console.log('filter data', data);
-    drawNetwork(data, start);
-    drawLegend();
+    division = 'Health';
+
+    data = filterData(graph, division);
+   //console.log('filter data', data);
+    drawNetwork(data, division);
+    drawLegend(division);
 
     });
 
@@ -79,23 +80,23 @@ function buildGraph(containerId) {
             var nodes = graph.nodes
             .filter(function(d){
                 return d.id == "Jeremy Page" | d.id == "Mary Grider" | d.division == division | d.id == "Paul Decker"
-                });
-            console.log('nodes', nodes);
+            });
 
             var links = graph.links
             .filter(function(d){
-
                return d.id == "Jeremy Page" | d.id == "Mary Grider" | d.division == division | d.id == "Paul Decker" 
-                });
+            });
 
         } else {
             var nodes = graph.nodes
              .filter(function(d){
-                return  d.division == division | d.id == "Paul Decker"});
+                return  d.division == division | d.id == "Paul Decker"
+            });
             
             var links = graph.links
              .filter(function(d){
-                return d.division == division | d.id == "Paul Decker"});
+                return d.division == division | d.id == "Paul Decker"
+            });
 
         }   
 
@@ -103,13 +104,21 @@ function buildGraph(containerId) {
           return graph_new;
         }
         
-    function drawLegend(){
+    function drawLegend(division){
+        if(division == 'International') {
+            var height = 600;
+        } else if(division == 'Health') {
+            var height = 1200;
+        } else {
+            var height = 1100;
+        }
+
         var color = d3.scaleOrdinal() // D3 Version 4
-                    .domain(['A', 'B', 'C', 'D', 'E', 'O'])
-                    .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
+                .domain(['A', 'B', 'C', 'D', 'E', 'O'])
+                .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
 
         var radius = 6;
-        var height = 1200;
+        //var height = 600;
         var y = 40;
         var x = 40;
         var spacing = 27;
@@ -160,11 +169,19 @@ function buildGraph(containerId) {
                 .text(function(d) { return d; });
     }    
 
-    function drawNetwork(graph, division){
-        var width = 1350;
-        var height = 1200;
-        var radius = 6;
+    function drawNetwork(graph, division, height){
+        
+        if(division == 'International') {
+            var height = 600;
+        } else if(division == 'Health') {
+            var height = 1200;
+        } else {
+            var height = 1100;
+        }
 
+        var width = 1350;
+        // var height = 1200;
+        var radius = 6;
         var margin = {
                 top: 75,
                 right: 50,
@@ -187,14 +204,14 @@ function buildGraph(containerId) {
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
        var color = d3.scaleOrdinal() // D3 Version 4
-                .domain(['A', 'B', 'C', 'D', 'E', 'O'])
-                .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
+            .domain(['A', 'B', 'C', 'D', 'E', 'O'])
+            .range(['#1E0576', '#771493' , '#e70033', '#0063be', '#009a3d', '#f7941e']);
 
        var simulation = d3.forceSimulation()
-        .force("link", d3.forceLink().id(function(d) { return d.id; }))
-        .force("charge", d3.forceManyBody().strength(-15))
-        .force("collide", d3.forceCollide().radius(17))
-        .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2));
+            .force("link", d3.forceLink().id(function(d) { return d.id; }))
+            .force("charge", d3.forceManyBody().strength(-15))
+            .force("collide", d3.forceCollide().radius(17))
+            .force("center", d3.forceCenter(innerWidth / 2, innerHeight / 2));
 
         // set the nodes
         var nodes = graph.nodes;
@@ -309,7 +326,7 @@ function buildGraph(containerId) {
             linkedByIndex[d.source.index + "," + d.target.index] = 1;
         });
 
-        console.log('linkedByIndex', linkedByIndex);
+        //console.log('linkedByIndex', linkedByIndex);
 
         // check the dictionary to see if nodes are linked
         function isConnected(a, b) {
